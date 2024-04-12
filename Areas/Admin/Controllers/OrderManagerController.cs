@@ -11,23 +11,23 @@ using ShopGiay.Models;
 namespace ShopGiay.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    public class OrdersManagerController : Controller
+    public class OrderManagerController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public OrdersManagerController(ApplicationDbContext context)
+        public OrderManagerController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Admin/Orders
+        // GET: Admin/OrderManager
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Orders.Include(o => o.User);
             return View(await applicationDbContext.ToListAsync());
         }
 
-        // GET: Admin/Orders/Details/5
+        // GET: Admin/OrderManager/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -46,19 +46,19 @@ namespace ShopGiay.Areas.Admin.Controllers
             return View(order);
         }
 
-        // GET: Admin/Orders/Create
+        // GET: Admin/OrderManager/Create
         public IActionResult Create()
         {
             ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id");
             return View();
         }
 
-        // POST: Admin/Orders/Create
+        // POST: Admin/OrderManager/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,UserId,OrderDate,Total,ShippingAddress,Notes")] Order order)
+        public async Task<IActionResult> Create([Bind("Id,UserId,OrderDate,Total,ShippingAddress,IsShipped,OrderStatus,Notes")] Order order)
         {
             if (ModelState.IsValid)
             {
@@ -70,7 +70,7 @@ namespace ShopGiay.Areas.Admin.Controllers
             return View(order);
         }
 
-        // GET: Admin/Orders/Edit/5
+        // GET: Admin/OrderManager/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -87,12 +87,12 @@ namespace ShopGiay.Areas.Admin.Controllers
             return View(order);
         }
 
-        // POST: Admin/Orders/Edit/5
+        // POST: Admin/OrderManager/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,UserId,OrderDate,Total,ShippingAddress,Notes")] Order order)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,UserId,OrderDate,Total,ShippingAddress,IsShipped,OrderStatus,Notes")] Order order)
         {
             if (id != order.Id)
             {
@@ -123,7 +123,7 @@ namespace ShopGiay.Areas.Admin.Controllers
             return View(order);
         }
 
-        // GET: Admin/Orders/Delete/5
+        // GET: Admin/OrderManager/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -142,7 +142,7 @@ namespace ShopGiay.Areas.Admin.Controllers
             return View(order);
         }
 
-        // POST: Admin/Orders/Delete/5
+        // POST: Admin/OrderManager/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

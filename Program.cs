@@ -70,9 +70,9 @@ using (var scope = app.Services.CreateScope())
 {
     var userManeger = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
-    string email = "adminTongTai@gmail.com";
+    string email = "admin@gmail.com";
     string password = "Text12!@";
-    string fullname = "TongTaiAdminGiaVoVaCaiKet";
+    string fullname = "Admin";
 
     if (await userManeger.FindByEmailAsync(email) == null)
     {

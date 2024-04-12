@@ -28,9 +28,7 @@
                         </li> *@
 
 @*                         <partial name="_CartSummary" model="@ViewBag.Cart" /> *@
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="ShoppingCart" asp-action="Index">Giỏ hàng</a>
-                        </li> 
+                        @await Component.InvokeAsync("CartSummary")
                     </ul>
 
                     <partial name="_LoginPartial" />

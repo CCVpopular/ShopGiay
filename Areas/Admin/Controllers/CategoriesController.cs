@@ -39,7 +39,7 @@ namespace ShopGiay.Areas.Admin.Controllers
             if (ModelState.IsValid)
             {
                 await _categoryRepository.AddAsync(category);
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Create));
             }
             // Nếu ModelState không hợp lệ, hiển thị form với dữ liệu đã nhập
             return View(category);
