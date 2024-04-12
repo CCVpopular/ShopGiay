@@ -77,50 +77,36 @@ namespace ShopGiay.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-
+            ViewBag.OrderStatusList = Enum.GetValues(typeof(OrderStatus)).Cast<OrderStatus>().ToList();
             var order = await _context.Orders.FindAsync(id);
-            if (order == null)
-            {
-                return NotFound();
-            }
-            ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id", order.UserId);
             return View(order);
         }
 
         // POST: Admin/OrderManager/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,UserId,OrderDate,Total,ShippingAddress,IsShipped,OrderStatus,Notes")] Order order)
+        public async Task<IActionResult> Edit(int id, [Bind("ShippingAddress,IsShipped,OrderStatus,Notes")] Order order)
         {
-            if (id != order.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
                 try
                 {
-                    _context.Update(order);
+                var existingOrder = await _context.Orders.FindAsync(id);
+                if (existingOrder == null)
+                {
+                    return NotFound();
+                }
+                existingOrder.ShippingAddress = order.ShippingAddress;
+                existingOrder.IsShipped = order.IsShipped;
+                existingOrder.OrderStatus = order.OrderStatus;
+                existingOrder.Notes = order.Notes;
+                _context.Update(existingOrder);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!OrderExists(order.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    throw;
                 }
                 return RedirectToAction(nameof(Index));
-            }
-            ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id", order.UserId);
-            return View(order);
         }
 
         // GET: Admin/OrderManager/Delete/5

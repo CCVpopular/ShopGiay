@@ -12,8 +12,8 @@ using ShopGiay.EF;
 namespace ShopGiay.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240412121029_AddAllTable")]
-    partial class AddAllTable
+    [Migration("20240412135031_AddAll")]
+    partial class AddAll
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -21,6 +21,17 @@ builder.Services.AddRazorPages();
 builder.Services.AddScoped<IProductRepository, EFProductRepository>();
 builder.Services.AddScoped<ICategoryRepository, EFCategoryRepository>();
 builder.Services.AddDistributedMemoryCache();
+builder.Services.AddAuthentication()
+    .AddFacebook(options =>
+    {
+        options.ClientId = "1081454596399393";
+        options.ClientSecret = "d28fd9cb69ba04d0e4b592a5be5c7513";
+    })
+    .AddGoogle(options =>
+    {
+        options.ClientId = "348277320847-m38cbmpb3dr21oafapgf75gvtsvmr2ts.apps.googleusercontent.com";
+        options.ClientSecret = "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";
+    });
 
 var app = builder.Build();
 

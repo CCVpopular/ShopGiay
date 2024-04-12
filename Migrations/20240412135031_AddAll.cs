@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ShopGiay.Migrations
 {
     /// <inheritdoc />
-    public partial class AddAllTable : Migration
+    public partial class AddAll : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

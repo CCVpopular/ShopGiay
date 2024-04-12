@@ -10,7 +10,7 @@ namespace ShopGiay.Models
 		public DateTime OrderDate { get; set; }
 		public decimal Total { get; set; }
 		[Required(ErrorMessage = "Vui lòng nhập địa chỉ nhận hàng")]
-		public string ShippingAddress { get; set; }
+		public string? ShippingAddress { get; set; }
 		public bool IsShipped { get; set; }	
 		public OrderStatus OrderStatus { get; set; }
 		public string? Notes { get; set; }
@@ -19,8 +19,8 @@ namespace ShopGiay.Models
 	}
     public enum OrderStatus
     {
-        paid,
         unpaid,
+        paid,
         Canceled
     }
 
