@@ -58,25 +58,33 @@
             <ul class="menu">
                 <li><a href="/">Trang chủ</a></li>
                 <li class="dropdown">
-                    <a href="#" class="color2">Giày nam</a>
-                    <div class="dropdown-content">
-                        <a href="/Home/SPTheoGioiTinh/1">Thể thao Nam</a>
+                    <a href="#" class="color2">Thể loại Giày</a>
+                    <div class="input-group dropdown-content">
+                        <a href="#" class="btn btn-link searchLink" data-search-string="Giày Chạy Bộ">Giày Chạy Bộ</a>
+                        <a href="#" class="btn btn-link searchLink" data-search-string="Giày Thời Trang">Giày Thời Trang</a>
                     </div>
                 </li>
-                <li class="dropdown">
-                    <a href="#" class="color4">Giày nữ</a>
-                    <div class="dropdown-content">
-                        <a href="/Home/SPTheoGioiTinh/2">Thể thao nữ</a>
-                    </div>
-                </li>
-                <li class="dropdown">
+
+                <script>
+                    // Bắt sự kiện click trên các thẻ a có class 'searchLink'
+                    document.querySelectorAll('.searchLink').forEach(function (link) {
+                        link.addEventListener('click', function (event) {
+                            event.preventDefault(); // Ngăn chặn hành động mặc định của thẻ a (chuyển hướng)
+                            var searchString = this.getAttribute('data-search-string'); // Lấy chuỗi tìm kiếm từ thuộc tính data
+                            // Chuyển hướng đến trang tìm kiếm với tham số truy vấn searchString
+                            window.location.href = '/Product/SearchCategory?SearchString=' + encodeURIComponent(searchString);
+                        });
+                    });
+                </script>
+
+@*                 <li class="dropdown">
                     <a href="#" class="color12">Thương hiệu</a>
                     <div class="dropdown-content">
                         <a href="/Home/SPTheoThuongHieu/1">Nike</a>
                         <a href="/Home/SPTheoThuongHieu/2">Vans</a>
                         <!-- Các thương hiệu khác -->
                     </div>
-                </li>
+                </li> *@
                 <li><a href="/Home/TinTuc" class="color11">Tin tức</a></li>
                 <li><a href="/Home/GioiThieu" class="color10">Giới thiệu</a></li>
                 <li><a href="/User/Themmoiykien" class="color7">Liên hệ</a></li>

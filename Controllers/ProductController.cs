@@ -32,6 +32,20 @@ namespace ShopGiay.Controllers
                 return View("Search", products);
             }
         }
+        public async Task<IActionResult> SearchCategory(string searchString)
+        {
+            //if (searchString != null)
+            //{
+            //    return RedirectToAction(nameof(Index));
+            //}
+            //else
+            {
+                // Gọi phương thức tìm kiếm sản phẩm từ repository
+                var products = await _productRepository.GetByNameCategoryAsync(searchString);
+                // Trả về view hiển thị kết quả tìm kiếm
+                return View("Search", products);
+            }
+        }
 
         public async Task<IActionResult> Index()
         {

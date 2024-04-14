@@ -39,5 +39,9 @@ namespace ShopGiay.Repositories
         {
             return await _context.Products.Include(x => x.Category).Where(n => n.Name.Contains(SearchString)).ToListAsync();
         }
+        public async Task<IEnumerable<Product>> GetByNameCategoryAsync(string SearchString)
+        {
+            return await _context.Products.Include(x => x.Category).Where(n => n.Category.Name.Contains(SearchString)).ToListAsync();
+        }
     }
 }

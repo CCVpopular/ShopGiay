@@ -71,38 +71,38 @@ app.UseEndpoints(endpoints =>
 //    name: "default",
 //    pattern: "{controller=Product}/{action=Index}/{id?}");
 
-using (var scope = app.Services.CreateScope())
-{
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+//using (var scope = app.Services.CreateScope())
+//{
+//    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-    var roles = new[] { "Admin", "Member" };
-    foreach (var role in roles)
-    {
-        if (!await roleManager.RoleExistsAsync(role))
-            await roleManager.CreateAsync(new IdentityRole(role));
-    }
-}
+//    var roles = new[] { "Admin", "Member" };
+//    foreach (var role in roles)
+//    {
+//        if (!await roleManager.RoleExistsAsync(role))
+//            await roleManager.CreateAsync(new IdentityRole(role));
+//    }
+//}
 
-using (var scope = app.Services.CreateScope())
-{
-    var userManeger = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+//using (var scope = app.Services.CreateScope())
+//{
+//    var userManeger = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
-    string email = "admin@gmail.com";
-    string password = "Text12!@";
-    string fullname = "Admin";
+//    string email = "admin@gmail.com";
+//    string password = "Text12!@";
+//    string fullname = "Admin";
 
-    if (await userManeger.FindByEmailAsync(email) == null)
-    {
-        var user = new ApplicationUser();
-        user.UserName = email;
-        user.Email = email;
-        user.FullName = fullname;
+//    if (await userManeger.FindByEmailAsync(email) == null)
+//    {
+//        var user = new ApplicationUser();
+//        user.UserName = email;
+//        user.Email = email;
+//        user.FullName = fullname;
 
-        await userManeger.CreateAsync(user, password);
+//        await userManeger.CreateAsync(user, password);
 
-        await userManeger.AddToRoleAsync(user, "Admin");
+//        await userManeger.AddToRoleAsync(user, "Admin");
 
-    }
-}
+//    }
+//}
 
 app.Run();
