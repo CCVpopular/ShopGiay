@@ -46,29 +46,6 @@ namespace ShopGiay.Areas.Admin.Controllers
             return View(order);
         }
 
-        // GET: Admin/OrderManager/Create
-        public IActionResult Create()
-        {
-            ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id");
-            return View();
-        }
-
-        // POST: Admin/OrderManager/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,UserId,OrderDate,Total,ShippingAddress,IsShipped,OrderStatus,Notes")] Order order)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(order);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id", order.UserId);
-            return View(order);
-        }
 
         // GET: Admin/OrderManager/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -99,6 +76,7 @@ namespace ShopGiay.Areas.Admin.Controllers
                 existingOrder.IsShipped = order.IsShipped;
                 existingOrder.OrderStatus = order.OrderStatus;
                 existingOrder.Notes = order.Notes;
+                existingOrder.PhoneNumber = order.PhoneNumber;
                 _context.Update(existingOrder);
                     await _context.SaveChangesAsync();
                 }

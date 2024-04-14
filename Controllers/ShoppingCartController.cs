@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 using ShopGiay.EF;
 using ShopGiay.Helpers;
 using ShopGiay.Models;
@@ -21,10 +22,14 @@ namespace ShopGiay.Controllers
             _userManager = userManager;
             _context = context;
         }
-        public async Task<IActionResult> AddToCart(int productId, int quantity)
+        public async Task<IActionResult> AddToCart(int productId, int quantity, string action)
         {
             // phương thức lấy thông tin sản phẩm từ productId
             Product product = await GetProductFromDatabaseAsync(productId);
+            if (product == null)
+            {
+                return NotFound(); // Trả về 404 Not Found
+            }
             var cartItem = new CartItem
             {
                 ProductId = productId,
@@ -36,9 +41,18 @@ namespace ShopGiay.Controllers
             var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart") ?? new ShoppingCart();
             cart.AddItem(cartItem);
             HttpContext.Session.SetObjectAsJson("Cart", cart);
-            return RedirectToAction(nameof(Index), nameof(Product));
-        }
 
+            if (action == "buyNow")
+            {
+                // Nếu hành động là "Mua Ngay", chuyển hướng đến trang giỏ hàng
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                // Mặc định chuyển hướng về trang sản phẩm
+                return RedirectToAction(nameof(Index), nameof(Product), new { productId });
+            }
+        }
 
         public async Task<IActionResult> RemoveFromCart(int productId)
         {
@@ -55,6 +69,10 @@ namespace ShopGiay.Controllers
         public async Task<IActionResult> UpdateQuantity(int productId, int quantity)
         {
             var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart") ?? new ShoppingCart();
+            if (cart == null)
+            {
+                return NotFound();
+            }
             cart.UpdateQuantity(productId, quantity);
             HttpContext.Session.SetObjectAsJson("Cart", cart);
             return RedirectToAction(nameof(Index));
@@ -62,6 +80,12 @@ namespace ShopGiay.Controllers
 
         public IActionResult Checkout()
         {
+            var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart");
+            if (cart == null || cart.Items.Count == 0)
+            {
+                // Xử lý giỏ hàng trống...
+                return RedirectToAction(nameof(Index));
+            }
             return View(new Order());
         }
         public IActionResult Index()
@@ -80,11 +104,6 @@ namespace ShopGiay.Controllers
         public async Task<IActionResult> Checkout(Order order)
         {
             var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart");
-            if (cart == null || !cart.Items.Any())
-            {
-                // Xử lý giỏ hàng trống...
-                return RedirectToAction(nameof(Index));
-            }
             var user = await _userManager.GetUserAsync(User);
             order.UserId = user.Id;
             order.OrderDate = DateTime.UtcNow;

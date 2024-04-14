@@ -1,0 +1,82 @@
+﻿@model IEnumerable<ShopGiay.Models.Product>
+
+@{
+    ViewData["Title"] = "Search";
+}
+<h2>Kết quả tìm kiếm</h2>
+@if (Model.Any())
+{
+    <table class="table table-striped">
+        <tbody>
+            <div class="row">
+                @foreach (var item in Model)
+                {
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card h-100">
+                            <a asp-action="Details" asp-route-id="@item.Id">
+                                <img class="card-img-top product-img" src="@item.ImageUrl" alt="@item.Name">
+                            </a>
+                            <div class="card-body">
+                                <h4 class="card-title">
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="product-title">@item.Name</a>
+                                </h4>
+                                <h5>@item.Price</h5>
+                            </div>
+                            <div class="card-footer">
+                                <form asp-controller="ShoppingCart" asp-action="AddToCart" method="post">
+                                    <input type="hidden" name="productId" value="@item.Id" />
+                                    <input type="hidden" id="quantity" name="quantity" value="1" min="1" />
+                                    <button class="btn btn-info btn-sm add-to-cart-button" type="submit">Add to Cart</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </tbody>
+    </table>
+}
+else
+{
+    <p>Không tìm thấy sản phẩm nào phù hợp.</p>
+}
+<style>
+    .add-to-cart-button {
+        display: none;
+    }
+
+    .card-footer {
+        display: flex;
+        justify-content: center; /* căn giữa các phần tử con theo chiều ngang */
+    }
+
+    .product-title {
+        font-size: 14px; /* Đặt kích thước chữ cho tên sản phẩm */
+        color: #000000; /* Đặt màu chữ cho tên sản phẩm là màu đen */
+    }
+
+    a {
+        text-decoration: none;
+    }
+</style>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var productCards = document.querySelectorAll(".card");
+
+        productCards.forEach(function (card) {
+            card.addEventListener("mouseover", function () {
+                var addToCartButton = card.querySelector(".add-to-cart-button");
+                addToCartButton.style.display = "block";
+            });
+
+            card.addEventListener("mouseout", function () {
+                var addToCartButton = card.querySelector(".add-to-cart-button");
+                addToCartButton.style.display = "none";
+            });
+        });
+    });
+</script>
+
+
+
+

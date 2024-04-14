@@ -9,6 +9,6 @@ namespace ShopGiay.Repositories
         Task AddAsync(Product product);
         Task UpdateAsync(Product product);
         Task DeleteAsync(int id);
-
+        Task<IEnumerable<Product>> GetByNameAsync(string SearchString);
     }
 }

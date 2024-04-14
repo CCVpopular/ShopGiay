@@ -4,6 +4,13 @@
     ViewData["Title"] = "Index";
 }
 
+@using (Html.BeginForm(nameof(Index),"ProductManager",new {area = "Admin"}, FormMethod.Get))
+{
+    <p>
+        Find Product:@Html.TextBox("SearchString",ViewBag.CurrentFilter as string)
+        <input type="submit" value="Tìm kiếm" />
+    </p>
+}
 
 <table class="table">
     <thead>

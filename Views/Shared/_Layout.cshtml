@@ -1,42 +1,90 @@
-﻿@using ShopGiay.Helpers
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - ShopGiay</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/ShopGiay.styles.css" asp-append-version="true" />
+
 </head>
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Product" asp-action="Index">ShopGiay</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Product" asp-action="Index">
+                    Shop Giày
+                </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-@*                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li> *@
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-end align-items-center">
+                    <div class="d-flex align-items-center">
+                        <!-- Added parent container -->
+                        @using (Html.BeginForm("Search", "Product", FormMethod.Get))
+                        {
+                            <div class="input-group">
+                                @Html.TextBox("SearchString", ViewBag.CurrentFilter as string, new { @class = "form-control small-textbox no-border", placeholder = "Enter search item..." })
+                                <button type="submit" class="btn btn-link">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </div>
+                        }
+@*                         <form asp-controller="Product" asp-action="Screach" method="get">
+                            <input type="text" name="searchString" placeholder="Tìm kiếm sản phẩm..." />
+                            <button type="submit">Tìm kiếm</button>
+                        </form> *@
 
-@*                         <partial name="_CartSummary" model="@ViewBag.Cart" /> *@
-                        @await Component.InvokeAsync("CartSummary")
-                    </ul>
-
-                    <partial name="_LoginPartial" />
-
+                        <ul class="navbar-nav ms-3">
+                            <!-- Added margin -->
+                            <li class="nav-item">
+                                @await Component.InvokeAsync("CartSummary")
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <!-- Added parent container -->
+                        <partial name="_LoginPartial" />
+                    </div>
                 </div>
             </div>
         </nav>
     </header>
+    <div class="header-bottom">
+        <div class="wrap">
+            <ul class="menu">
+                <li><a href="/">Trang chủ</a></li>
+                <li class="dropdown">
+                    <a href="#" class="color2">Giày nam</a>
+                    <div class="dropdown-content">
+                        <a href="/Home/SPTheoGioiTinh/1">Thể thao Nam</a>
+                    </div>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="color4">Giày nữ</a>
+                    <div class="dropdown-content">
+                        <a href="/Home/SPTheoGioiTinh/2">Thể thao nữ</a>
+                    </div>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="color12">Thương hiệu</a>
+                    <div class="dropdown-content">
+                        <a href="/Home/SPTheoThuongHieu/1">Nike</a>
+                        <a href="/Home/SPTheoThuongHieu/2">Vans</a>
+                        <!-- Các thương hiệu khác -->
+                    </div>
+                </li>
+                <li><a href="/Home/TinTuc" class="color11">Tin tức</a></li>
+                <li><a href="/Home/GioiThieu" class="color10">Giới thiệu</a></li>
+                <li><a href="/User/Themmoiykien" class="color7">Liên hệ</a></li>
+            </ul>
+        </div>
+    </div>
+
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
@@ -54,3 +102,5 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+
+

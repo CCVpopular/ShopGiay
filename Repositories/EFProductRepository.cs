@@ -35,6 +35,9 @@ namespace ShopGiay.Repositories
             _context.Products.Remove(product);
             await _context.SaveChangesAsync();
         }
-    
+        public async Task<IEnumerable<Product>> GetByNameAsync(string SearchString)
+        {
+            return await _context.Products.Include(x => x.Category).Where(n => n.Name.Contains(SearchString)).ToListAsync();
+        }
     }
 }

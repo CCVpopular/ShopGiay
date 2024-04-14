@@ -1,0 +1,63 @@
+﻿@model ShopGiay.Models.Product
+
+@{
+    ViewData["Title"] = "Display";
+}
+<br>
+<br>
+<br>
+<br>
+<br>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <img src="@Html.DisplayFor(model => model.ImageUrl)" class="card-img-top" alt="Product Image">
+
+            </div>
+        </div>
+        <div class="col-md-6">
+            <h1>Product Details</h1>
+            <dl class="row">
+                <dt class="col-sm-4">Name:</dt>
+                <dd class="col-sm-8">@Html.DisplayFor(model => model.Name)</dd>
+
+                <dt class="col-sm-4">Price:</dt>
+                <dd class="col-sm-8">@Html.DisplayFor(model => model.Price)</dd>
+
+                <dt class="col-sm-4">Description:</dt>
+                <dd class="col-sm-8">@Html.DisplayFor(model => model.Description)</dd>
+
+                <dt class="col-sm-4">Category:</dt>
+                <dd class="col-sm-8">@Html.DisplayFor(model => model.Category.Name)</dd>
+                <br>
+                <br>
+                <br>
+                <br>
+                <div class="card-body">
+                    <form asp-controller="ShoppingCart" asp-action="AddToCart" method="post">
+                        <input type="hidden" name="productId" value="@Model.Id" />
+                        <div class="form-group">
+                            <label for="quantity">Quantity:</label>
+                            <input type="number" id="quantity" name="quantity" class="form-control quantity-input-sm" value="1" min="1">
+                        </div>
+                        <br>
+                        <button class="btn btn-primary" type="submit" name="action" value="addToCart">Add to Cart</button>
+                        <button class="btn btn-success" type="submit" name="action" value="buyNow">Buy Now</button>
+                    </form>
+                </div>
+            </dl>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-md-12">
+            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+        </div>
+    </div>
+</div>
+<style>
+    .quantity-input-sm {
+        width: 200px; /* Điều chỉnh kích thước mong muốn */
+    }
+</style>

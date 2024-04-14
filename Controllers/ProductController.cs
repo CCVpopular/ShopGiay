@@ -17,15 +17,29 @@ namespace ShopGiay.Controllers
             _categoryRepository = categoryRepository;
         }
         // Hiển thị danh sách sản phẩm
+        public async Task<IActionResult> Search(string searchString)
+        {
+            if (searchString == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                // Gọi phương thức tìm kiếm sản phẩm từ repository
+                var products = await _productRepository.GetByNameAsync(searchString);
+
+                // Trả về view hiển thị kết quả tìm kiếm
+                return View("Search", products);
+            }
+        }
+
         public async Task<IActionResult> Index()
         {
             var products = await _productRepository.GetAllAsync();
-            var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart") ?? new ShoppingCart();
-            ViewBag.CartItemCount = cart.Items.Sum(item => item.Quantity);
             return View(products);
         }        
         // Hiển thị thông tin chi tiết sản phẩm
-        public async Task<IActionResult> Display(int id)
+        public async Task<IActionResult> Details(int id)
         {
             var product = await _productRepository.GetByIdAsync(id);
             if (product == null)

@@ -22,10 +22,18 @@ namespace ShopGiay.Areas.Admin.Controllers
             _categoryRepository = categoryRepository;
         }
         // Hiển thị danh sách sản phẩm
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? SearchString)
         {
-            var products = await _productRepository.GetAllAsync();
-            return View(products);
+            if (SearchString == null)
+            {
+                var products = await _productRepository.GetAllAsync();
+                return View(products);
+            }
+            else
+            {
+                var products = await _productRepository.GetByNameAsync(SearchString);
+                return View(products);
+            }
         }
         // Hiển thị form thêm sản phẩm mới
         public async Task<IActionResult> Add()

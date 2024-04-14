@@ -1,5 +1,16 @@
 ﻿@model ShopGiay.Models.CartModel
 
-<li class="nav-item">
-    <a class="nav-link text-dark" asp-area="" asp-controller="ShoppingCart" asp-action="Index">Giỏ hàng @Model.TotalQuantity @Model.TotalPrice</a>
-</li> 
+
+    <a class="nav-link text-dark" asp-area="" asp-controller="ShoppingCart" asp-action="Index">
+        <i class="fa fa-shopping-cart" style="font-size:24px; margin-right: 5px;"></i>
+        <sup class="total-quantity">@Model.TotalQuantity</sup>
+        <span class="total-price">[@Model.TotalPrice]</span>
+    </a>
+
+<style>
+    .total-quantity {
+        font-size: 12px;
+        vertical-align: super;
+        margin-left: -5px;
+    }
+</style>

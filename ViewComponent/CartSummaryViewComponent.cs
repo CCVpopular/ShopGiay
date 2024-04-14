@@ -14,6 +14,6 @@ namespace ShopGiay.ViewComponents
                 TotalQuantity = cart?.Items.Sum(item => item.Quantity) ?? 0,
                 TotalPrice = cart?.Items.Sum(item => item.Quantity * item.Price) ?? 0,
             });
-        }
+        }  
     }
 }

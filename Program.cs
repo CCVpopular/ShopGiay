@@ -4,6 +4,7 @@ using ShopGiay.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using ShopGiay.Models;
+using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -60,10 +61,15 @@ app.UseEndpoints(endpoints =>
       name: "areas",
       pattern: "{area:exists}/{controller=ProductManager}/{action=Index}/{id?}"
     );
-});
-app.MapControllerRoute(
+
+    endpoints.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Product}/{action=Index}/{id?}");
+    pattern: "{controller=Product}/{action=Index}/{id?}")
+    .RequireAuthorization();
+});
+//app.MapControllerRoute(
+//    name: "default",
+//    pattern: "{controller=Product}/{action=Index}/{id?}");
 
 using (var scope = app.Services.CreateScope())
 {

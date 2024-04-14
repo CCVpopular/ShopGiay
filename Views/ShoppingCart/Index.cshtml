@@ -1,32 +1,125 @@
 ﻿@model ShoppingCart
-<h2>Your Cart</h2>
-<table class="table">
-	<tr>
-		<th>Product</th>
-		<th>Name</th>
-		<th>Quantity</th>
-		<th>Price</th>
-		<th>Total</th>
-	</tr>
-	@foreach (var item in Model.Items)
-	{
-		<tr>
-			<td><img src="@item.Image" width="50px" /></td>
-			<td>@item.Name</td>
-			<td>
-				<form asp-controller="ShoppingCart" asp-action="UpdateQuantity" method="post">
-					<input type="hidden" name="productId" value="@item.ProductId" />
-					<label for="Quantity"> So luong </label>
-					<input type="number" id="Quantity" name="Quantity" value="@item.Quantity" min="1" onchange="this.form.submit()" />
-				</form>
-			</td>
-			<td>@item.Price</td>
-			<td>@(item.Price * item.Quantity)</td>
-			<td>
-				<a asp-action="RemoveFromCart" asp-route-productId="@item.ProductId">Remove</a>
-			</td>
-		</tr>
-	}
-</table>
 
-<a asp-action="Checkout" class="btn btn-info"> Dat Hang </a>
+@{
+    decimal totalPrice = 0;
+    bool cartIsEmpty = Model.Items.Count == 0;
+}
+
+<div class="container pb-5 mt-n2 mt-md-n3">
+    <div class="row">
+        <div class="col-xl-9 col-md-8">
+            <h2 class="h6 d-flex flex-wrap justify-content-between align-items-center px-4 py-3 bg-secondary"><span>Your Cart</span></h2>
+
+            @if (!cartIsEmpty)
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <tbody>
+                            @foreach (var item in Model.Items)
+                            {
+                                <tr>
+                                    <td><img src="@item.Image" width="50px" alt="@item.Name" class="cart-item-thumb mx-auto mr-sm-4" /></td>
+                                    <td>
+                                        <h3 class="product-card-title font-weight-semibold border-0 pb-0"><a href="#">@item.Name</a></h3>
+                                        <div class="font-size-sm">
+                                            <span class="text-muted mr-2">Quantity:</span>
+                                            <form asp-controller="ShoppingCart" asp-action="UpdateQuantity" method="post">
+                                                <input type="hidden" name="productId" value="@item.ProductId" />
+                                                <input type="number" name="Quantity" value="@item.Quantity" min="1" class="form-control form-control-sm quantity-input-sm" onchange="this.form.submit()" />
+
+                                            </form>
+                                        </div>
+                                    </td>
+                                    <td>@item.Price</td>
+                                    <td>
+                                        @(item.Price * item.Quantity)
+                                    </td>
+                                    <td>
+                                        <a asp-action="RemoveFromCart" asp-route-productId="@item.ProductId" class="btn btn-outline-danger btn-sm">Remove</a>
+                                    </td>
+                                </tr>
+                                totalPrice += (item.Price * item.Quantity);
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="empty-cart-msg">
+                    <p>Your shopping cart is empty.</p>
+                </div>
+            }
+        </div>
+        <!-- Sidebar-->
+        <div class="col-xl-3 col-md-4 pt-3 pt-md-0">
+            @if (!cartIsEmpty)
+            {
+                <h2 class="h6 px-4 py-3 bg-secondary text-center">Subtotal</h2>
+                <div class="h3 font-weight-semibold text-center py-3">$@totalPrice</div>
+                <hr>
+                <div class="checkout-btn">
+                    <a asp-action="Checkout" class="btn btn-primary btn-block justify-content-center">Proceed to Checkout</a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<style>
+    .cart-item-thumb {
+        display: block;
+        width: 10rem
+    }
+
+        .cart-item-thumb > img {
+            display: block;
+            width: 100%
+        }
+
+    .product-card-title > a {
+        color: #222;
+    }
+
+    .font-weight-semibold {
+        font-weight: 600 !important;
+    }
+
+    .product-card-title {
+        display: block;
+        margin-bottom: .75rem;
+        padding-bottom: .875rem;
+        border-bottom: 1px dashed #e2e2e2;
+        font-size: 1rem;
+        font-weight: normal;
+    }
+
+    .text-muted {
+        color: #888 !important;
+    }
+
+    .bg-secondary {
+        background-color: #f7f7f7 !important;
+    }
+
+    .accordion .accordion-heading {
+        margin-bottom: 0;
+        font-size: 1rem;
+        font-weight: bold;
+    }
+
+    .font-weight-semibold {
+        font-weight: 600 !important;
+    }
+
+    .checkout-btn {
+        text-align: center;
+    }
+
+    .quantity-input-sm {
+        width: 50px; /* Điều chỉnh kích thước mong muốn */
+    }
+
+
+    textarea
+
+</style>
