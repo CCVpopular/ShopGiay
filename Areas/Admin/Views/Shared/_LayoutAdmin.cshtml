@@ -15,7 +15,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>SB Admin 2 - Dashboard</title>
+    <title>Admin - Dashboard</title>
 
     <!-- Custom fonts for this template-->
     <link href="~/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -65,13 +65,13 @@
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
                    aria-expanded="true" aria-controls="collapseTwo">
-                    <span>Add Item</span>
+                    <span>Thêm Mục</span>
                 </a>
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Custom Components:</h6>
-                        <a asp-area="Admin" asp-controller="ProductManager" asp-action="Add" class="collapse-item">Product</a>
-                        <a asp-area="Admin" asp-controller="Categories" asp-action="Create" class="collapse-item">Category</a>
+                        <h6 class="collapse-header">Thêm tùy chỉnh:</h6>
+                        <a asp-area="Admin" asp-controller="ProductManager" asp-action="Add" class="collapse-item">Sản Phẩm</a>
+                        <a asp-area="Admin" asp-controller="Categories" asp-action="Create" class="collapse-item">Thể Loại</a>
                     </div>
                 </div>
             </li>
@@ -80,15 +80,15 @@
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
                    aria-expanded="true" aria-controls="collapseUtilities">
-                    <span>List Product</span>
+                    <span>Danh Sàch Các Loại</span>
                 </a>
                 <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
                      data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Item list:</h6>
-                        <a asp-area="Admin" asp-controller="ProductManager" asp-action="Index" class="collapse-item" >Porduct</a>
-                        <a asp-area="Admin" asp-controller="Categories" asp-action="Index" class="collapse-item">Category</a>
-                        <a asp-area="Admin" asp-controller="OrderManager" asp-action="Index" class="collapse-item">Other</a>
+                        <h6 class="collapse-header">Danh Sách Danh Mục:</h6>
+                        <a asp-area="Admin" asp-controller="ProductManager" asp-action="Index" class="collapse-item" >Sản Phẩm</a>
+                        <a asp-area="Admin" asp-controller="Categories" asp-action="Index" class="collapse-item">Thể Loại</a>
+                        <a asp-area="Admin" asp-controller="OrderManager" asp-action="Index" class="collapse-item">Đơn Hàng</a>
                         <a class="collapse-item" href="utilities-animation.html">Animations</a>
                     </div>
                 </div>
@@ -101,7 +101,7 @@
             <div class="sidebar-heading">
             </div>
 
-            <!-- Nav Item - Pages Collapse Menu -->
+@*             <!-- Nav Item - Pages Collapse Menu -->
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
                    aria-expanded="true" aria-controls="collapsePages">
@@ -120,7 +120,7 @@
                         <a class="collapse-item" href="blank.html">Blank Page</a>
                     </div>
                 </div>
-            </li>
+            </li> *@
 
             <!-- Nav Item - Charts -->
             <li class="nav-item">
@@ -170,7 +170,7 @@
                     </button>
 
                     <!-- Topbar Search -->
-                    <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+@*                     <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
                         <div class="input-group">
                             <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
                                    aria-label="Search" aria-describedby="basic-addon2">
@@ -180,12 +180,12 @@
                                 </button>
                             </div>
                         </div>
-                    </form>
+                    </form> *@
 
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
 
-                        <!-- Nav Item - Search Dropdown (Visible Only XS) -->
+@*                         <!-- Nav Item - Search Dropdown (Visible Only XS) -->
                         <li class="nav-item dropdown no-arrow d-sm-none">
                             <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -207,7 +207,7 @@
                                     </div>
                                 </form>
                             </div>
-                        </li>
+                        </li> *@
 
                         <!-- Nav Item - Messages -->
                         <li class="nav-item dropdown no-arrow mx-1">
@@ -283,7 +283,7 @@
                             </div>
                         </li>
 
-                        <div class="topbar-divider d-none d-sm-block"></div>
+
 
 
 
@@ -311,12 +311,12 @@
                                     Activity Log
                                 </a> *@
                                 <div class="dropdown-divider"></div>
-                                <form id="logoutForm" class="dropdown-item" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                                <form id="logoutForm" class="dropdown-item" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Product", new { area = "" })">
                                 <button id="logout" type="submit" class="btn btn-link text-dark ">Logout</button>
                                 </form>
                         
                             </div>
-                        
+                        </li>
 
                     </ul>
 

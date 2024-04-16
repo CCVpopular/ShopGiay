@@ -1,60 +1,43 @@
-﻿@model ShopGiay.Models.Order
+﻿@model IEnumerable<ShopGiay.Models.OrderDetail>
 
-@{
-    ViewData["Title"] = "Details";
+<h2>Chi tiết Đơn Hàng</h2>
+
+@if (Model != null && Model.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Tên Sản Phẩm</th>
+                <th>Hình ảnh</th>
+                <th>Số lượng</th>
+                <th>Đơn giá</th>
+                <th>Tổng giá</th>
+                <!-- Thêm các cột khác nếu cần -->
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var orderDetail in Model)
+            {
+                <tr>
+                    <td>@orderDetail.Product.Name</td>
+                    <td><img src="@orderDetail.Product.ImageUrl" width="100px" /></td>
+                    <td>@String.Format("{0:N0}", orderDetail.Quantity)</td>
+                    <td>@String.Format("{0:C}", orderDetail.Price)</td>
+                    <td>@String.Format("{0:C}", orderDetail.Price * orderDetail.Quantity)</td>
+                    <!-- Thêm các cột khác nếu cần -->
+                </tr>
+            }
+            <tr>
+                <td colspan="4" style="text-align:right;"><strong>Tổng cộng:</strong></td>
+                <td>@String.Format("{0:C}", Model.Sum(od => od.Price * od.Quantity))</td>
+            </tr>
+        </tbody>
+    </table>
+@*     <a asp-controller="Orders" asp-action="Index" asp-route-userid="@Model.FirstOrDefault().Order.UserId" class="btn btn-primary">Trở Về Danh Sách Đơn Hàng</a> *@
+    <a asp-action="Index" class="btn btn-primary">Trở Về Danh Sách Đơn Hàng</a>
+    <!-- Điều chỉnh đường dẫn tùy thuộc vào cách bạn cấu hình định tuyến -->
 }
-
-<h1>Details</h1>
-
-<div>
-    <h4>Order</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.OrderDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.OrderDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Total)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Total)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ShippingAddress)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ShippingAddress)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IsShipped)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IsShipped)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.OrderStatus)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.OrderStatus)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Notes)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Notes)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.User)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.User.Id)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+else
+{
+    <p>No order details found.</p>
+}

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using ShopGiay.Helpers;
 using ShopGiay.Models;
 using ShopGiay.Repositories;
+using X.PagedList;
 
 namespace ShopGiay.Controllers
 {
@@ -17,33 +18,29 @@ namespace ShopGiay.Controllers
             _categoryRepository = categoryRepository;
         }
         // Hiển thị danh sách sản phẩm
-        public async Task<IActionResult> Search(string searchString)
+        public async Task<IActionResult> Search(string searchString, int? page)
         {
-            if (searchString == null)
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            else
-            {
-                // Gọi phương thức tìm kiếm sản phẩm từ repository
-                var products = await _productRepository.GetByNameAsync(searchString);
-
-                // Trả về view hiển thị kết quả tìm kiếm
-                return View("Search", products);
-            }
+            var pageNumber = page ?? 1;
+            var pageSize = 9;
+            var products = string.IsNullOrEmpty(searchString)
+                ? await _productRepository.GetAllAsync()
+                : await _productRepository.GetByNameAsync(searchString);
+            var pagedProducts = products.ToPagedList(pageNumber, pageSize);
+            ViewBag.SearchString = searchString;
+            // Trả về view hiển thị kết quả tìm kiếm
+            return View("Search", pagedProducts);
+            
         }
-        public async Task<IActionResult> SearchCategory(string searchString)
+        public async Task<IActionResult> SearchCategory(string searchString1, int? page)
         {
-            //if (searchString != null)
-            //{
-            //    return RedirectToAction(nameof(Index));
-            //}
-            //else
             {
+                var pageNumber = page ?? 1;
+                var pageSize = 9;
                 // Gọi phương thức tìm kiếm sản phẩm từ repository
-                var products = await _productRepository.GetByNameCategoryAsync(searchString);
+                var products = await _productRepository.GetByNameCategoryAsync(searchString1);
+                var pagedProducts = products.ToPagedList(pageNumber, pageSize);
                 // Trả về view hiển thị kết quả tìm kiếm
-                return View("Search", products);
+                return View("Search", pagedProducts);
             }
         }
 

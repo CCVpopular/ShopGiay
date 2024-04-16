@@ -7,6 +7,7 @@ using ShopGiay.EF;
 using ShopGiay.Helpers;
 using ShopGiay.Models;
 using ShopGiay.Repositories;
+using ShopGiay.Services;
 
 namespace ShopGiay.Controllers
 {
@@ -15,12 +16,13 @@ namespace ShopGiay.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IProductRepository _productRepository;
         private readonly ApplicationDbContext _context;
-
-        public ShoppingCartController(IProductRepository productRepository, UserManager<ApplicationUser> userManager, ApplicationDbContext context)
+        private readonly IVnPay _vnPayService;
+        public ShoppingCartController(IProductRepository productRepository, UserManager<ApplicationUser> userManager, ApplicationDbContext context, IVnPay vnPay)
         {
             _productRepository = productRepository;
             _userManager = userManager;
             _context = context;
+            _vnPayService = vnPay;
         }
         public async Task<IActionResult> AddToCart(int productId, int quantity, string action)
         {
@@ -41,17 +43,8 @@ namespace ShopGiay.Controllers
             var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart") ?? new ShoppingCart();
             cart.AddItem(cartItem);
             HttpContext.Session.SetObjectAsJson("Cart", cart);
-
-            if (action == "buyNow")
-            {
-                // Nếu hành động là "Mua Ngay", chuyển hướng đến trang giỏ hàng
-                return RedirectToAction(nameof(Index));
-            }
-            else
-            {
-                // Mặc định chuyển hướng về trang sản phẩm
-                return RedirectToAction(nameof(Index), nameof(Product), new { productId });
-            }
+            // Nếu hành động là "Mua Ngay", chuyển hướng đến trang giỏ hàng
+            return RedirectToAction(nameof(Index));        
         }
 
         public async Task<IActionResult> RemoveFromCart(int productId)
@@ -101,9 +94,22 @@ namespace ShopGiay.Controllers
         }
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> Checkout(Order order)
+        public async Task<IActionResult> Checkout(Order order, string payment = "COD")
         {
             var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart");
+            if (payment == "Thanh toán VnPay")
+            {
+                var vnPayModel = new VnPaymentRequestModel
+                {
+                    Amount = (double)cart.Items.Sum(p =>p.Price * p.Quantity),
+                    CreatedDate = DateTime.Now,
+                    Description = "Đơn hàng thành công",
+                    FullName = "Khách hàng",
+                    OrderId = new Random().Next(100,10000),
+                };
+                return Redirect(_vnPayService.CreatePaymentUrl(HttpContext, vnPayModel));
+            }
+
             var user = await _userManager.GetUserAsync(User);
             order.UserId = user.Id;
             order.OrderDate = DateTime.UtcNow;
@@ -114,10 +120,10 @@ namespace ShopGiay.Controllers
                 Quantity = i.Quantity,
                 Price = i.Price
             }).ToList();
-            _context.Orders.Add(order);
+            _context.Orders.Add(order); 
             await _context.SaveChangesAsync();
             HttpContext.Session.Remove("Cart");
-            return View("OrderCompleted", order.Id); // Trang xác nhận hoàn thành đơn hàng
+            return View("OrderCompleted"); // Trang xác nhận hoàn thành đơn hàng
         }
 
         [HttpGet]
@@ -135,6 +141,34 @@ namespace ShopGiay.Controllers
 
             return PartialView("_CartSummary", cartSummary);
         }
+        [Authorize]
+        public IActionResult PaymentFail()
+        {
+            return View();
+        }
+
+        [Authorize]
+        public IActionResult PaymentCallBack()
+        {
+            var response = _vnPayService.PaymentExecute(Request.Query);
+
+            if (response == null || response.VnPayResponseCode != "00")
+            {
+                TempData["Message"] = $"Lỗi thanh toán VN Pay: {response.VnPayResponseCode}";
+                return RedirectToAction("PaymentFail");
+            }
+
+
+            // Lưu đơn hàng vô database
+
+            TempData["Message"] = $"Thanh toán VNPay thành công";
+            return View("OrderCompleted");
+        }
+        public IActionResult PaymentSuccess()
+        {
+            return View("OrderCompleted");
+        }
     }
 }
+
 

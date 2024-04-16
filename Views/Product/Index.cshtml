@@ -4,48 +4,91 @@
     ViewData["Title"] = "Index";
 }
 
-<table class="table table-striped">
-    <tbody>
-        <div class="row">
+<video loop="" muted="" playsinline="" autoplay="" fetchpriority="high" width="100%" height="auto">
+    <source src="https://brand.assets.adidas.com/video/upload/f_auto:video,q_auto/if_w_gt_1920,w_1920/originals_ss24_sl72_mh_2_d_26f1c3929a.mp4" media="(min-width: 600px)" type="video/mp4">
+</video>
+<h1 class="text-center">Bán Chạy</h1>
+<div class="horizontal-line"></div>
+<br />
+    <div class="swiper-container slidehomepage slidehomepage-1">
+        <div class="swiper-wrapper">
             @foreach (var item in Model)
             {
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <div class="card h-100">
+                <div class="swiper-slide">
+                    <div class="card">
                         <a asp-action="Details" asp-route-id="@item.Id">
                             <img class="card-img-top product-img" src="@item.ImageUrl" alt="@item.Name">
                         </a>
                         <div class="card-body">
                             <h4 class="card-title">
-                                <a asp-action="Details" asp-route-id="@item.Id" class="product-title" >@item.Name</a>
+                                <a asp-action="Details" asp-route-id="@item.Id" class="product-title">@item.Name</a>
                             </h4>
-                            <h5>@item.Price</h5>
-                        </div>
-                        <div class="card-footer">
-                            <form asp-controller="ShoppingCart" asp-action="AddToCart" method="post">
-                                <input type="hidden" name="productId" value="@item.Id" />
-                                <input type="hidden" id="quantity" name="quantity" value="1" min="1" />
-                                <button class="btn btn-info btn-sm add-to-cart-button" type="submit">Add to Cart</button>
-                            </form>
+                        <h5>@string.Format("{0:N0}", @item.Price)đ</h5>
                         </div>
                     </div>
                 </div>
             }
         </div>
-    </tbody>
-</table>
+    </div>
+<h1 class="text-center" >Sản Shẩm Mới</h1>
+<div class="horizontal-line"></div>
+<br />
+<div class="container" >
+    <table class="table table-striped">
+        <tbody>
+            <div class="row">
+                @foreach (var item in Model)
+                {
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card h-100">
+                            <a asp-action="Details" asp-route-id="@item.Id">
+                                <img class="card-img-top product-img" src="@item.ImageUrl" alt="@item.Name">
+                            </a>
+                            <div class="card-body">
+                                <form asp-controller="ShoppingCart" asp-action="AddToCart" method="post">
+                                    <input type="hidden" name="productId" value="@item.Id" />
+                                    <input type="hidden" id="quantity" name="quantity" value="1" min="1" />
+                                    <button class="btn btn-info btn-sm add-to-cart-button" type="submit">Thêm Vào Giỏ Hàng</button>
+                                </form>
+                                <h4 class="card-title">
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="product-title">@item.Name</a>
+                                </h4>
+                                <h5>@string.Format("{0:N0}", @item.Price)đ</h5>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+            </div>
+
+        </tbody>
+        <div class="container text-center">
+            <a asp-action="Search" class="btn btn-primary">Xem Thêm</a>
+        </div>
+    </table>
+</div>
+
 <style>
+    .horizontal-line {
+        width: 150px; /* Độ rộng của thanh ngang */
+        height: 10px; /* Độ cao của thanh ngang */
+        background-color: orange; /* Màu của thanh ngang */
+        margin: 0 auto; /* Để canh giữa */
+        border-radius: 5px; /* Độ cong của hai đầu thanh ngang */
+    }
+
     .add-to-cart-button {
         display: none;
     }
 
     .card-footer {
         display: flex;
-        justify-content: center; /* căn giữa các phần tử con theo chiều ngang */
+        justify-content: center;
     }
 
     .product-title {
-        font-size: 14px; /* Đặt kích thước chữ cho tên sản phẩm */
-        color: #000000; /* Đặt màu chữ cho tên sản phẩm là màu đen */
+        font-size: 14px;
+        color: #000000;
     }
 
     a {
@@ -53,11 +96,46 @@
     }
 
     .swiper-container.slidehomepage.slidehomepage-1 {
-        margin: 0; /* loại bỏ margin */
-        padding: 0; /* loại bỏ padding */
-        display: flex; /* sử dụng flexbox để căn chỉnh phần tử */
-        flex-wrap: wrap; /* cho phép các phần tử con xuống dòng khi không đủ không gian */
+        max-width: 100%;
+        overflow: hidden;
+        background-color: #f0f0f0;
     }
+
+    .swiper-wrapper {
+        display: flex;
+    }
+
+    .swiper-slide {
+        flex: 0 0 auto;
+        width: 33.33%;
+    }
+
+    .card {
+        position: relative;
+    }
+
+        .card:hover .product-img {
+            transform: scale(1.1);
+            transition: transform 0.3s ease-in-out;
+        }
+
+    .product-img {
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .card-body {
+        flex: 1;
+        overflow: hidden;
+    }
+
+    .product-title {
+        font-size: 14px;
+        color: #000000;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
 </style>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
@@ -75,6 +153,34 @@
             });
         });
     });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var swiper = new Swiper('.swiper-container', {
+            slidesPerView: 4, // Display three slides at a time
+            spaceBetween: 10,
+            loop: true,
+            autoplay: {
+                delay: 5000,
+                disableOnInteraction: false,
+            },
+        });
+
+        var productCards = document.querySelectorAll(".card");
+
+        productCards.forEach(function (card) {
+            card.addEventListener("mouseover", function () {
+                var addToCartButton = card.querySelector(".add-to-cart-button");
+                addToCartButton.style.display = "block";
+            });
+
+            card.addEventListener("mouseout", function () {
+                var addToCartButton = card.querySelector(".add-to-cart-button");
+                addToCartButton.style.display = "none";
+            });
+        });
+    });
+
 </script>
 
 

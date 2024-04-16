@@ -1,0 +1,126 @@
+﻿    @model ShopGiay.Models.Contact
+
+    @{
+        ViewData["Title"] = "Create";
+    }
+
+
+<div class="can-le">
+    <div class="row">
+        <div class="col-md-6">
+            <!-- Nội dung của phần đầu tiên -->
+            <br />
+            <br />
+            <br />
+            <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d1959.3868576684713!2d106.77475864463032!3d10.828621509700355!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sfr!2s!4v1713256790265!5m2!1sfr!2s"
+        width="900" height="600" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+
+        <div class="col-md-6">
+            <!-- Nội dung của phần thứ hai -->
+            <div class="container">
+                <div class="header-page-contact clearfix">
+                    <h1>Liên hệ</h1>
+                </div>
+                <div class="box-info-contact">
+                    <ul class="list-info">
+                        <li>
+                            <p>Địa chỉ chúng tôi</p>
+                            <p><strong>01 Đ. Số 1, Phước Long B, Quận 9, Thành phố Hồ Chí Minh</strong></p>
+                        </li>
+                        <li>
+                            <p>Email chúng tôi</p>
+                            <p><strong>truongthanhdat3323@gmail.com</strong></p>
+                        </li>
+                        <li>
+                            <p>Điện thoại</p>
+                            <p><strong>0971180941</strong></p>
+                        </li>
+                        <li>
+                            <p>Thời gian làm việc</p>
+                            <p><strong>Thứ 2 đến Thứ 6 từ 8h30 đến 17h30</strong></p>
+                        </li>
+                    </ul>
+                </div>
+                <h1>Gửi thắc mắc cho chúng tôi</h1>
+                <div class="col-md-12">
+                    <form asp-action="Create" class="needs-validation" novalidate>
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+                            <label asp-for="Name" class="control-label">Tên của bạn:</label>
+                            <input asp-for="Name" class="form-control" required />
+                            <div class="invalid-feedback">Vui lòng nhập tên</div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Email" class="control-label">Email:</label>
+                            <input asp-for="Email" class="form-control" required />
+                            <div class="invalid-feedback">vui lòng nhập email email</div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Content" class="control-label">Nội dung:</label>
+                            <textarea asp-for="Content" class="form-control" rows="5" required></textarea>
+                            <div class="invalid-feedback">vui lòng nhập nội dung</div>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Gửi</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
+    }
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 50px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 30px;
+        }
+
+        .invalid-feedback {
+            display: none;
+            margin-top: 5px;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+        }
+        .can-le{
+            margin-left: 30px;
+            margin-right: 70px;
+        }
+    </style>
+
+    <script>
+        // Validate form fields on submit
+        (function () {
+            'use strict';
+            var forms = document.querySelectorAll('.needs-validation');
+            Array.prototype.slice.call(forms)
+                .forEach(function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+        })();
+    </script>

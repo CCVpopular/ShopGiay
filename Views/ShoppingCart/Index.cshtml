@@ -1,89 +1,111 @@
 ﻿@model ShoppingCart
 
 @{
+    // Khởi tạo biến để lưu tổng giá và kiểm tra giỏ hàng có trống không
     decimal totalPrice = 0;
     bool cartIsEmpty = Model.Items.Count == 0;
 }
 
+<!-- Bắt đầu phần HTML -->
 <div class="container pb-5 mt-n2 mt-md-n3">
     <div class="row">
         <div class="col-xl-9 col-md-8">
+            <!-- Phần tiêu đề giỏ hàng -->
             <h2 class="h6 d-flex flex-wrap justify-content-between align-items-center px-4 py-3 bg-secondary"><span>Your Cart</span></h2>
 
+            <!-- Kiểm tra giỏ hàng trống -->
             @if (!cartIsEmpty)
             {
+                <!-- Bảng hiển thị sản phẩm trong giỏ hàng -->
                 <div class="table-responsive">
                     <table class="table table-striped">
                         <tbody>
                             @foreach (var item in Model.Items)
                             {
+                                <!-- Mỗi hàng cho mỗi sản phẩm trong giỏ hàng -->
                                 <tr>
+                                    <!-- Hiển thị hình ảnh sản phẩm -->
                                     <td><img src="@item.Image" width="50px" alt="@item.Name" class="cart-item-thumb mx-auto mr-sm-4" /></td>
+                                    <!-- Tên sản phẩm -->
                                     <td>
                                         <h3 class="product-card-title font-weight-semibold border-0 pb-0"><a href="#">@item.Name</a></h3>
+                                        <!-- Số lượng sản phẩm -->
                                         <div class="font-size-sm">
                                             <span class="text-muted mr-2">Quantity:</span>
+                                            <!-- Form để cập nhật số lượng sản phẩm -->
                                             <form asp-controller="ShoppingCart" asp-action="UpdateQuantity" method="post">
-                                                <input type="hidden" name="productId" value="@item.ProductId" />
-                                                <input type="number" name="Quantity" value="@item.Quantity" min="1" class="form-control form-control-sm quantity-input-sm" onchange="this.form.submit()" />
-
+                                                <input type="hidden" name="productId" value="@item.ProductId" /> 
+                                                <input type="number" name="Quantity" value="@item.Quantity" min="1" class="form-control form-control-sm quantity-input-sm border-secondary" onchange="this.form.submit()" />
                                             </form>
                                         </div>
                                     </td>
-                                    <td>@item.Price</td>
-                                    <td>
-                                        @(item.Price * item.Quantity)
-                                    </td>
+                                    <!-- Giá của mỗi sản phẩm -->
+                                    <td>@string.Format("{0:N0}", item.Price)đ</td>
+                                    <!-- Tổng giá của mỗi sản phẩm (Giá x Số lượng) -->
+                                    <td>@string.Format("{0:N0}", (item.Price * item.Quantity))đ</td>
+                                    <!-- Nút để xóa sản phẩm khỏi giỏ hàng -->
                                     <td>
                                         <a asp-action="RemoveFromCart" asp-route-productId="@item.ProductId" class="btn btn-outline-danger btn-sm">Remove</a>
                                     </td>
                                 </tr>
+                                <!-- Cập nhật tổng giá của giỏ hàng -->
                                 totalPrice += (item.Price * item.Quantity);
                             }
                         </tbody>
                     </table>
                 </div>
             }
-            else
+            <!-- Hiển thị thông báo nếu giỏ hàng trống -->
+            @if (cartIsEmpty)
             {
                 <div class="empty-cart-msg">
-                    <p>Your shopping cart is empty.</p>
+                    <p>Your Cart is Empty.</p>
                 </div>
             }
         </div>
-        <!-- Sidebar-->
+        <!-- Phần Sidebar -->
         <div class="col-xl-3 col-md-4 pt-3 pt-md-0">
+            <!-- Hiển thị tổng giá của giỏ hàng -->
             @if (!cartIsEmpty)
             {
-                <h2 class="h6 px-4 py-3 bg-secondary text-center">Subtotal</h2>
-                <div class="h3 font-weight-semibold text-center py-3">$@totalPrice</div>
+                <h2 class="h6 px-4 py-3 bg-secondary text-center">Total</h2>
+                <!-- Hiển thị tổng giá ở dạng tiền tệ -->
+                <div class="h3 font-weight-semibold text-center py-3">@string.Format("{0:N0}", totalPrice)đ</div>
                 <hr>
+                <!-- Nút để đặt hàng -->
                 <div class="checkout-btn">
-                    <a asp-action="Checkout" class="btn btn-primary btn-block justify-content-center">Proceed to Checkout</a>
+                    <a asp-action="Checkout" class="btn btn-primary btn-block justify-content-center">Đặt Hàng</a>
                 </div>
             }
         </div>
     </div>
+    <!-- Nút để quay lại trang chủ -->
+    <a asp-controller="Product" asp-action="Index" class="btn btn-primary justify-content-center">Về Trang Chử</a>
 </div>
+<!-- Phần CSS -->
 <style>
+    /* CSS cho hình ảnh sản phẩm */
     .cart-item-thumb {
         display: block;
         width: 10rem
     }
 
-        .cart-item-thumb > img {
-            display: block;
-            width: 100%
-        }
+    .cart-item-thumb > img {
+        display: block;
+        width: 100%
+    }
 
+    /* CSS cho tiêu đề sản phẩm */
     .product-card-title > a {
         color: #222;
     }
 
+    /* CSS cho font-weight */
     .font-weight-semibold {
         font-weight: 600 !important;
     }
 
+    /* CSS cho tiêu đề sản phẩm */
     .product-card-title {
         display: block;
         margin-bottom: .75rem;
@@ -93,33 +115,23 @@
         font-weight: normal;
     }
 
+    /* CSS cho văn bản mờ */
     .text-muted {
         color: #888 !important;
     }
 
+    /* CSS cho màu nền */
     .bg-secondary {
         background-color: #f7f7f7 !important;
     }
 
-    .accordion .accordion-heading {
-        margin-bottom: 0;
-        font-size: 1rem;
-        font-weight: bold;
-    }
-
-    .font-weight-semibold {
-        font-weight: 600 !important;
-    }
-
+    /* CSS cho nút Đặt hàng */
     .checkout-btn {
         text-align: center;
     }
 
+    /* CSS cho ô nhập số lượng */
     .quantity-input-sm {
         width: 50px; /* Điều chỉnh kích thước mong muốn */
     }
-
-
-    textarea
-
 </style>

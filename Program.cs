@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using ShopGiay.Models;
 using Microsoft.AspNetCore.Authorization;
+using ShopGiay.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,10 +18,13 @@ builder.Services.AddSession(options => {
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+//builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ApplicationDbContext>();
+
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddDefaultTokenProviders().AddDefaultUI().AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddRazorPages();
 builder.Services.AddScoped<IProductRepository, EFProductRepository>();
 builder.Services.AddScoped<ICategoryRepository, EFCategoryRepository>();
+builder.Services.AddSingleton<IVnPay, EFVnPay>();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddAuthentication()
     .AddFacebook(options =>
@@ -60,12 +64,11 @@ app.UseEndpoints(endpoints =>
     endpoints.MapControllerRoute(
       name: "areas",
       pattern: "{area:exists}/{controller=ProductManager}/{action=Index}/{id?}"
-    );
+    ).RequireAuthorization(new AuthorizeAttribute() { Roles = "Admin" });
 
     endpoints.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Product}/{action=Index}/{id?}")
-    .RequireAuthorization();
+    pattern: "{controller=Product}/{action=Index}/{id?}");
 });
 //app.MapControllerRoute(
 //    name: "default",

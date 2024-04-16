@@ -122,13 +122,13 @@ namespace ShopGiay.Areas.Identity.Pages.Account
                     //return LocalRedirect(returnUrl);
                     var user = await _userManager.FindByEmailAsync(Input.Email);
                     var roles = await _userManager.GetRolesAsync(user);
-                    if (roles.Contains("Admin"))
+                    if (!roles.Contains("Admin"))
                     {
-                        return Redirect("~/Admin/ProductManager/index");
+                        return LocalRedirect(returnUrl);
                     }
                     else
                     {
-                        return LocalRedirect(returnUrl);
+                        return Redirect("~/Admin/ProductManager/index");
                     }
                 }
                 if (result.RequiresTwoFactor)

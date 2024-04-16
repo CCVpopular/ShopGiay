@@ -20,9 +20,9 @@ namespace ShopGiay.Models
 	}
     public enum OrderStatus
     {
-        unpaid,
-        paid,
-        Canceled
+        Chưa_Thanh_Toán,
+        Đã_Thanh_Toán,
+        Bị_Hủy
     }
-
+		
 }

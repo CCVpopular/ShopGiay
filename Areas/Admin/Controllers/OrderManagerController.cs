@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +11,8 @@ using ShopGiay.Models;
 
 namespace ShopGiay.Areas.Admin.Controllers
 {
-    [Area("Admin")]
+    [Area(nameof(Admin))]
+    [Authorize(Roles = "Admin")]
     public class OrderManagerController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -30,20 +32,12 @@ namespace ShopGiay.Areas.Admin.Controllers
         // GET: Admin/OrderManager/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
+            var orderDetails = await _context.OrderDetails.Include(od => od.Order).Include(od => od.Product).Where(od => od.OrderId == id).ToListAsync();
+            if(orderDetails == null)
             {
-                return NotFound();
+                NotFound();
             }
-
-            var order = await _context.Orders
-                .Include(o => o.User)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (order == null)
-            {
-                return NotFound();
-            }
-
-            return View(order);
+            return View(orderDetails);
         }
 
 

@@ -1,19 +1,24 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - ShopGiay</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/ShopGiay.styles.css" asp-append-version="true" />
-
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="~/css/Videobg.css" />
+    <!-- Link Swiper's CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow">
+            <span class="horizontal-space"></span>
+            <div class="container-fluid">   
                 <a class="navbar-brand" asp-area="" asp-controller="Product" asp-action="Index">
                     Shop Giày
                 </a>
@@ -27,13 +32,13 @@
                         @using (Html.BeginForm("Search", "Product", FormMethod.Get))
                         {
                             <div class="input-group">
-                                @Html.TextBox("SearchString", ViewBag.CurrentFilter as string, new { @class = "form-control small-textbox no-border", placeholder = "Enter search item..." })
+                                @Html.TextBox("SearchString", ViewBag.CurrentFilter as string, new { @class = "form-control small-textbox no-border", placeholder = "Nhập từ khóa..." })
                                 <button type="submit" class="btn btn-link">
                                     <i class="fa fa-search"></i>
                                 </button>
                             </div>
                         }
-@*                         <form asp-controller="Product" asp-action="Screach" method="get">
+@*                         <form asp-controller="Product" asp-action="Search" method="get">
                             <input type="text" name="searchString" placeholder="Tìm kiếm sản phẩm..." />
                             <button type="submit">Tìm kiếm</button>
                         </form> *@
@@ -43,25 +48,32 @@
                             <li class="nav-item">
                                 @await Component.InvokeAsync("CartSummary")
                             </li>
+                            <li>
+                                <partial name="_LoginPartial" />
+                            </li>
+                            <span class="horizontal-space"></span>
+
                         </ul>
                     </div>
                     <div class="d-flex align-items-center">
                         <!-- Added parent container -->
-                        <partial name="_LoginPartial" />
+
                     </div>
                 </div>
             </div>
         </nav>
     </header>
     <div class="header-bottom">
-        <div class="wrap">
+        <div class="wrap">           
             <ul class="menu">
+                <p></p>
                 <li><a href="/">Trang chủ</a></li>
                 <li class="dropdown">
-                    <a href="#" class="color2">Thể loại Giày</a>
+                    <a asp-controller="Product" asp-action="Search" class="color">Giày Các Loại</a>
                     <div class="input-group dropdown-content">
                         <a href="#" class="btn btn-link searchLink" data-search-string="Giày Chạy Bộ">Giày Chạy Bộ</a>
                         <a href="#" class="btn btn-link searchLink" data-search-string="Giày Thời Trang">Giày Thời Trang</a>
+                        <a href="#" class="btn btn-link searchLink" data-search-string="Giày Bóng Rổ">Giày Bóng Rổ</a>
                     </div>
                 </li>
 
@@ -72,28 +84,18 @@
                             event.preventDefault(); // Ngăn chặn hành động mặc định của thẻ a (chuyển hướng)
                             var searchString = this.getAttribute('data-search-string'); // Lấy chuỗi tìm kiếm từ thuộc tính data
                             // Chuyển hướng đến trang tìm kiếm với tham số truy vấn searchString
-                            window.location.href = '/Product/SearchCategory?SearchString=' + encodeURIComponent(searchString);
+                            window.location.href = '/Product/SearchCategory?SearchString1=' + encodeURIComponent(searchString);
                         });
                     });
                 </script>
-
-@*                 <li class="dropdown">
-                    <a href="#" class="color12">Thương hiệu</a>
-                    <div class="dropdown-content">
-                        <a href="/Home/SPTheoThuongHieu/1">Nike</a>
-                        <a href="/Home/SPTheoThuongHieu/2">Vans</a>
-                        <!-- Các thương hiệu khác -->
-                    </div>
-                </li> *@
-                <li><a href="/Home/TinTuc" class="color11">Tin tức</a></li>
-                <li><a href="/Home/GioiThieu" class="color10">Giới thiệu</a></li>
-                <li><a href="/User/Themmoiykien" class="color7">Liên hệ</a></li>
+                <li><a asp-area="" asp-controller="Home" asp-action="Introduce" class="color10">Giới thiệu</a></li>
+                <li><a asp-area="" asp-controller="Contacts" asp-action="Create">Liên hệ</a></li>
+                <p></p>
             </ul>
         </div>
     </div>
 
-
-    <div class="container">
+    <div>
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
@@ -104,6 +106,126 @@
             &copy; 2024 - ShopGiay - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
+
+
+
+
+
+
+    <section class="footer4 cid-qv5AL7fBTQ" id="footer4-3i" data-rv-view="4081">
+
+
+
+
+
+        <div class="container">
+            <div class="media-container-row content mbr-white">
+                <div class="col-md-3 col-sm-4">
+                    <div class="mb-3 img-logo">
+                        <a href="https://mobirise.com/">
+                            <img src="assets/images/logo2.png" alt="Mobirise" media-simple="true">
+                        </a>
+                    </div>
+                    <p class="mb-3 mbr-fonts-style foot-title display-7">
+                        Footer Template
+                    </p>
+                    <p class="mbr-text mbr-fonts-style mbr-links-column display-7">
+                        <a href="#" class="text-white">About Us</a>
+                        <br><a href="#" class="text-white">Services</a>
+                        <br><a href="#" class="text-white">Selected Work</a>
+                        <br><a href="#" class="text-white">Get In Touch</a>
+                    </p>
+                </div>
+                <div class="col-md-4 col-sm-8">
+                    <p class="mb-4 foot-title mbr-fonts-style display-7">
+                        RECENT NEWS
+                    </p>
+                    <p class="mbr-text mbr-fonts-style foot-text display-7">
+                        Footer with solid color background and a contact form, Easily add subscribe and contact forms without any server-side integration.
+                        <br>
+                        <br>Mobirise helps you cut down development time by providing you with a flexible website editor with a drag and drop interface.
+                    </p>
+                </div>
+                <div class="col-md-4 offset-md-1 col-sm-12">
+                    <p class="mb-4 foot-title mbr-fonts-style display-7">
+                        SUBSCRIBE
+                    </p>
+                    <p class="mbr-text mbr-fonts-style form-text display-7">
+                        Get monthly updates and free resources.
+                    </p>
+                    <div class="media-container-column" data-form-type="formoid">
+                        <div data-form-alert="" hidden="" class="align-center">
+                            Thanks for filling out the form!
+                        </div>
+
+                        <form class="form-inline" action="https://mobirise.com/" method="post" data-form-title="Mobirise Form">
+                            <input type="hidden" value="vRET/u8MWXj5HqdICe0O/AFuT7jk5+CPZHPdks+8krul0VR5T/fUTi9vNpZ9D+BVgbsDZCi6hMSTiwPatzuxrHke1aYzINF2rNPEI9wgq7yf06YnT0cZAtGMMDz/OODi" data-form-email="true">
+                            <div class="form-group">
+                                <input type="email" class="form-control input-sm input-inverse my-2" name="email" required="" data-form-field="Email" placeholder="Email" id="email-footer4-3i">
+                            </div>
+                            <div class="input-group-btn m-2">
+                                <button href="" class="btn btn-primary display-4" type="submit" role="button">Subscribe</button>
+                            </div>
+                        </form>
+                    </div>
+                    <p class="mb-4 mbr-fonts-style foot-title display-7">
+                        CONNECT WITH US
+                    </p>
+                    <div class="social-list pl-0 mb-0">
+                        <div class="soc-item">
+                            <a href="https://twitter.com/mobirise" target="_blank">
+                                <span class="socicon-twitter socicon mbr-iconfont mbr-iconfont-social" media-simple="true"></span>
+                            </a>
+                        </div>
+                        <div class="soc-item">
+                            <a href="https://www.facebook.com/pages/Mobirise/1616226671953247" target="_blank">
+                                <span class="socicon-facebook socicon mbr-iconfont mbr-iconfont-social" media-simple="true"></span>
+                            </a>
+                        </div>
+                        <div class="soc-item">
+                            <a href="https://www.youtube.com/c/mobirise" target="_blank">
+                                <span class="socicon-youtube socicon mbr-iconfont mbr-iconfont-social" media-simple="true"></span>
+                            </a>
+                        </div>
+                        <div class="soc-item">
+                            <a href="https://instagram.com/mobirise" target="_blank">
+                                <span class="socicon-instagram socicon mbr-iconfont mbr-iconfont-social" media-simple="true"></span>
+                            </a>
+                        </div>
+                        <div class="soc-item">
+                            <a href="https://plus.google.com/u/0/+Mobirise" target="_blank">
+                                <span class="socicon-googleplus socicon mbr-iconfont mbr-iconfont-social" media-simple="true"></span>
+                            </a>
+                        </div>
+                        <div class="soc-item">
+                            <a href="https://www.behance.net/Mobirise" target="_blank">
+                                <span class="socicon-behance socicon mbr-iconfont mbr-iconfont-social" media-simple="true"></span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-lower">
+                <div class="media-container-row">
+                    <div class="col-sm-12">
+                        <hr>
+                    </div>
+                </div>
+                <div class="media-container-row mbr-white">
+                    <div class="col-sm-12 copyright">
+                        <p class="mbr-text mbr-fonts-style display-7">
+                            © Copyright 2023 Footer Template - All Rights Reserved
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
@@ -112,3 +234,9 @@
 </html>
 
 
+<style>
+    .horizontal-space {
+        width: 5em; /* Chiều rộng tương đương với một dấu cách */
+        display: inline-block; /* Cho phép nó hiển thị như một phần tử inline */
+    }
+</style>

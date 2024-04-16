@@ -6,6 +6,7 @@ using ShopGiay.Models;
 using ShopGiay.Repositories;
 using System.Diagnostics;
 using System.IO;
+using X.PagedList;
 
 
 namespace ShopGiay.Areas.Admin.Controllers
@@ -22,18 +23,20 @@ namespace ShopGiay.Areas.Admin.Controllers
             _categoryRepository = categoryRepository;
         }
         // Hiển thị danh sách sản phẩm
-        public async Task<IActionResult> Index(string? SearchString)
+        public async Task<IActionResult> Index(string searchString, int? page)
         {
-            if (SearchString == null)
-            {
-                var products = await _productRepository.GetAllAsync();
-                return View(products);
-            }
-            else
-            {
-                var products = await _productRepository.GetByNameAsync(SearchString);
-                return View(products);
-            }
+            var pageNumber = page ?? 1;
+            var pageSize = 5; // Số lượng mục trên mỗi trang
+
+            var products = string.IsNullOrEmpty(searchString)
+                ? await _productRepository.GetAllAsync()
+                : await _productRepository.GetByNameAsync(searchString);
+
+            var pagedProducts = products.ToPagedList(pageNumber, pageSize);
+
+            ViewBag.SearchString = searchString; // Để giữ lại giá trị của ô tìm kiếm
+
+            return View(pagedProducts);
         }
         // Hiển thị form thêm sản phẩm mới
         public async Task<IActionResult> Add()

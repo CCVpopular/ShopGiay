@@ -14,5 +14,6 @@ namespace ShopGiay.EF
 		public DbSet<Order> Orders { get; set; }
 		public DbSet<OrderDetail> OrderDetails { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        public DbSet<Contact> Contacts { get; set; }
     }
 }

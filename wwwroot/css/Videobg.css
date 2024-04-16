@@ -1,0 +1,18 @@
+﻿#video-bg {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    z-index: -1;
+}
+#content-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10; /* Đảm bảo rằng nội dung hiển thị trên video */
+    color: white; /* Chỉnh sửa màu sắc của nội dung để phù hợp với video */
+}

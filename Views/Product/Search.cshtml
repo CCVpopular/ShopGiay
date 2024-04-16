@@ -1,14 +1,15 @@
-﻿@model IEnumerable<ShopGiay.Models.Product>
+﻿@using X.PagedList.Mvc.Core
+
+@model X.PagedList.IPagedList<ShopGiay.Models.Product>
 
 @{
     ViewData["Title"] = "Search";
 }
-<h2>Kết quả tìm kiếm</h2>
-@if (Model.Any())
-{
-    <table class="table table-striped">
-        <tbody>
-            <div class="row">
+<br />
+<div class="container">
+        <table class="table table-striped">
+            <tbody>
+                <div class="row">
                 @foreach (var item in Model)
                 {
                     <div class="col-lg-4 col-md-6 mb-4">
@@ -17,12 +18,18 @@
                                 <img class="card-img-top product-img" src="@item.ImageUrl" alt="@item.Name">
                             </a>
                             <div class="card-body">
+                                <form asp-controller="ShoppingCart" asp-action="AddToCart" method="post">
+                                    <input type="hidden" name="productId" value="@item.Id" />
+                                    <input type="hidden" id="quantity" name="quantity" value="1" min="1" />
+                                    <button class="btn btn-info btn-sm add-to-cart-button" type="submit">Add to Cart</button>
+                                </form>
                                 <h4 class="card-title">
                                     <a asp-action="Details" asp-route-id="@item.Id" class="product-title">@item.Name</a>
                                 </h4>
                                 <h5>@item.Price</h5>
                             </div>
                             <div class="card-footer">
+                                <!-- Move the form inside the card-footer -->
                                 <form asp-controller="ShoppingCart" asp-action="AddToCart" method="post">
                                     <input type="hidden" name="productId" value="@item.Id" />
                                     <input type="hidden" id="quantity" name="quantity" value="1" min="1" />
@@ -32,14 +39,22 @@
                         </div>
                     </div>
                 }
-            </div>
-        </tbody>
-    </table>
-}
-else
-{
-    <p>Không tìm thấy sản phẩm nào phù hợp.</p>
-}
+                </div>
+            </tbody>
+        </table>
+    <div class="text-center mt-4">
+        @Html.PagedListPager(Model, page => Url.Action("Search", new { page, searchString = ViewBag.CurrentFilter }),
+                 new PagedListRenderOptions
+        {
+            Display = PagedListDisplayMode.IfNeeded,
+            MaximumPageNumbersToDisplay = 1000,
+            UlElementClasses = new[] { "pagination" },
+            LiElementClasses = new[] { "page-item" },
+            PageClasses = new[] { "page-link" }
+        })
+    </div>
+</div>
+
 <style>
     .add-to-cart-button {
         display: none;
@@ -47,16 +62,57 @@ else
 
     .card-footer {
         display: flex;
-        justify-content: center; /* căn giữa các phần tử con theo chiều ngang */
+        justify-content: center;
     }
 
     .product-title {
-        font-size: 14px; /* Đặt kích thước chữ cho tên sản phẩm */
-        color: #000000; /* Đặt màu chữ cho tên sản phẩm là màu đen */
+        font-size: 14px;
+        color: #000000;
     }
 
     a {
         text-decoration: none;
+    }
+
+    .swiper-container.slidehomepage.slidehomepage-1 {
+        max-width: 100%;
+        overflow: hidden;
+        background-color: #f0f0f0;
+    }
+
+    .swiper-wrapper {
+        display: flex;
+    }
+
+    .swiper-slide {
+        flex: 0 0 auto;
+        width: 33.33%;
+    }
+
+    .card {
+        position: relative;
+    }
+
+        .card:hover .product-img {
+            transform: scale(1.1);
+            transition: transform 0.3s ease-in-out;
+        }
+
+    .product-img {
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .card-body {
+        flex: 1;
+        overflow: hidden;
+    }
+
+    .product-title {
+        font-size: 14px;
+        color: #000000;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 </style>
 <script>

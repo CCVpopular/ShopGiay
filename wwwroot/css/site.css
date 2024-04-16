@@ -21,10 +21,6 @@ body {
   margin-bottom: 60px;
 }
 
-
-
-
-
 .header-bottom {
     border-bottom: 2px solid #ccc; /* Đường viền dưới */
 }
@@ -136,6 +132,7 @@ body {
 
 
 
-
-
-
+.small-input {
+    width: 400px; /* Độ rộng bạn muốn cho các khung nhập liệu */
+    margin: 0 auto;
+}
