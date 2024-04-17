@@ -4,8 +4,8 @@
     ViewData["Title"] = "Order List";
 }
 
-<table class="order-table">
-    <thead>
+<table class="table table-striped">
+    <thead class="thead-dark">
         <tr>
             <th>Order Date</th>
             <th>Customer Name</th>
@@ -24,14 +24,14 @@
                 <td>@order.OrderDate</td>
                 <td>@order.User.FullName</td>
                 <td>@order.ShippingAddress</td>
-                <td>@order.Total VND</td>
+                <td>@String.Format("{0:N0}", order.Total)đ</td>
                 <td>@(order.IsShipped ? "Đã Giao" : "Chưa Giao")</td>
                 <td>@order.OrderStatus</td>
                 <td>@order.Notes</td>
                 <td>
-                    <a class="btn btn-primary" asp-action="Details" asp-route-id="@order.Id">Chi Tiết</a>
-                    <a class="btn btn-primary" asp-action="Edit" asp-route-id="@order.Id">Chỉnh Sửa</a>
-                    <a class="btn btn-danger" asp-action="Delete" asp-route-id="@order.Id">Xóa</a>
+                    <a class="btn btn-sm btn-info" asp-action="Edit" asp-route-id="@order.Id"><i class="fas fa-edit"></i>Sửa</a>
+                    <a class="btn btn-sm btn-primary" asp-action="Details" asp-route-id="@order.Id"><i class="fas fa-eye"></i> Chi Tiết</a>
+                    <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@order.Id"><i class="fas fa-trash-alt"></i> Xóa</a>
                 </td>
             </tr>
         }
@@ -68,18 +68,6 @@
         }
 
     /* Style for buttons */
-    .btn {
-        display: inline-block;
-        padding: 8px 16px;
-        font-size: 14px;
-        font-weight: 600;
-        text-decoration: none;
-        text-align: center;
-        cursor: pointer;
-        border: none;
-        border-radius: 4px;
-        transition: background-color 0.3s ease;
-    }
 
     .btn-primary {
         color: #fff;

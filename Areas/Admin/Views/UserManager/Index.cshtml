@@ -1,0 +1,26 @@
+﻿@model List<ApplicationUser>
+
+<h2>Danh sách người dùng</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Tên người dùng</th>
+            <th>Email</th>
+            <th>Ngày/Tháng/Năm sính</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.UserName</td>
+                <td>@user.Email</td>
+                <td>@user.Dob</td>
+                <td>                    
+                    <a asp-action="Delete" asp-route-id="@user.Id" class="btn btn-sm btn-danger"><i class="fas fa-trash-alt"></i> Xóa</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

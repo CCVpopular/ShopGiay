@@ -6,6 +6,10 @@
     ViewData["Title"] = "Search";
 }
 <br />
+<br />
+<br />
+<br />
+<br />
 <div class="container">
         <table class="table table-striped">
             <tbody>
@@ -56,6 +60,21 @@
 </div>
 
 <style>
+    .headertop {
+        position: fixed;
+        top: 0;
+        width: 100%; /* Đảm bảo header chiếm toàn bộ chiều rộng của trình duyệt */
+        z-index: 500; /* Đảm bảo header hiển thị trên cùng của các phần tử khác */
+        /* Thêm các thuộc tính CSS khác nếu cần */
+    }
+
+    .header-bottom {
+        border-bottom: 2px solid #ccc; /* Đường viền dưới */
+        position: fixed; /* hoặc position: sticky; */
+        top: 60px; /* Điều chỉnh giá trị tùy thuộc vào chiều cao của menu đầu tiên */
+        width: 100%;
+        z-index: 400;
+    }
     .add-to-cart-button {
         display: none;
     }

@@ -3,7 +3,8 @@
 @{
     ViewData["Title"] = "Index";
 }
-
+<br />
+<br />
 <video loop="" muted="" playsinline="" autoplay="" fetchpriority="high" width="100%" height="auto">
     <source src="https://brand.assets.adidas.com/video/upload/f_auto:video,q_auto/if_w_gt_1920,w_1920/originals_ss24_sl72_mh_2_d_26f1c3929a.mp4" media="(min-width: 600px)" type="video/mp4">
 </video>
@@ -69,6 +70,20 @@
 </div>
 
 <style>
+    .headertop {
+        position: fixed;
+        top: 0;
+        width: 100%; /* Đảm bảo header chiếm toàn bộ chiều rộng của trình duyệt */
+        z-index: 500; /* Đảm bảo header hiển thị trên cùng của các phần tử khác */
+        /* Thêm các thuộc tính CSS khác nếu cần */
+    }
+    .header-bottom {
+        border-bottom: 2px solid #ccc; /* Đường viền dưới */
+        position: fixed; /* hoặc position: sticky; */
+        top: 60px; /* Điều chỉnh giá trị tùy thuộc vào chiều cao của menu đầu tiên */
+        width: 100%;
+        z-index: 400;
+    }
     .horizontal-line {
         width: 150px; /* Độ rộng của thanh ngang */
         height: 10px; /* Độ cao của thanh ngang */

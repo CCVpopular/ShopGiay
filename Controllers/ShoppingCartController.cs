@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Azure;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -97,7 +98,8 @@ namespace ShopGiay.Controllers
         public async Task<IActionResult> Checkout(Order order, string payment = "COD")
         {
             var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart");
-            if (payment == "Thanh toán VnPay")
+			var user = await _userManager.GetUserAsync(User);
+			if (payment == "Thanh toán VnPay")
             {
                 var vnPayModel = new VnPaymentRequestModel
                 {
@@ -107,10 +109,23 @@ namespace ShopGiay.Controllers
                     FullName = "Khách hàng",
                     OrderId = new Random().Next(100,10000),
                 };
-                return Redirect(_vnPayService.CreatePaymentUrl(HttpContext, vnPayModel));
+				order.UserId = user.Id;
+				order.OrderDate = DateTime.UtcNow;
+				order.Total = cart.Items.Sum(i => i.Price * i.Quantity);
+                order.OrderStatus = OrderStatus.Đã_Thanh_Toán;
+				order.OrderDetails = cart.Items.Select(i => new OrderDetail
+				{
+					ProductId = i.ProductId,
+					Quantity = i.Quantity,
+					Price = i.Price
+				}).ToList();
+				_context.Orders.Add(order);
+				await _context.SaveChangesAsync();
+				HttpContext.Session.Remove("Cart");
+				return Redirect(_vnPayService.CreatePaymentUrl(HttpContext, vnPayModel));
             }
 
-            var user = await _userManager.GetUserAsync(User);
+
             order.UserId = user.Id;
             order.OrderDate = DateTime.UtcNow;
             order.Total = cart.Items.Sum(i => i.Price * i.Quantity);
@@ -120,10 +135,12 @@ namespace ShopGiay.Controllers
                 Quantity = i.Quantity,
                 Price = i.Price
             }).ToList();
+
             _context.Orders.Add(order); 
             await _context.SaveChangesAsync();
             HttpContext.Session.Remove("Cart");
-            return View("OrderCompleted"); // Trang xác nhận hoàn thành đơn hàng
+			TempData["Message"] = "Thanh toán thành công";
+			return View("OrderCompleted"); // Trang xác nhận hoàn thành đơn hàng
         }
 
         [HttpGet]
@@ -157,10 +174,8 @@ namespace ShopGiay.Controllers
                 TempData["Message"] = $"Lỗi thanh toán VN Pay: {response.VnPayResponseCode}";
                 return RedirectToAction("PaymentFail");
             }
-
-
             // Lưu đơn hàng vô database
-
+            
             TempData["Message"] = $"Thanh toán VNPay thành công";
             return View("OrderCompleted");
         }

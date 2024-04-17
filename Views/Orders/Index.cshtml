@@ -3,7 +3,17 @@
 @{
     ViewData["Title"] = "Order List";
 }
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+
 <div class="container">
+    @if (Model.Any())
+    {
+
     <table class="order-table">
         <thead>
             <tr>
@@ -35,10 +45,21 @@
             }
         </tbody>
     </table>
-    <br />
-    <a asp-controller="Product" asp-action="Index" class="btn btn-primary">Trở Về Trang Chủ</a>
-</div>
+        <br />
+        <a asp-controller="Product" asp-action="Index" class="btn btn-primary">Trở Về Trang Chủ</a>
+    }
+    else
+    {
+        <h1 class="text-center">Bạn Chưa Có Đơn Hàng Nào!</h1>
+        <br />
+    }
 
+</div>
+<br />
+<br />
+<br />
+<br />
+<br />
 <style>
     /* General styles */
     body {

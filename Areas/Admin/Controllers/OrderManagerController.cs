@@ -108,13 +108,59 @@ namespace ShopGiay.Areas.Admin.Controllers
             var order = await _context.Orders.FindAsync(id);
             if (order != null)
             {
+                var orderDetail = await _context.OrderDetails.FirstOrDefaultAsync(od => od.OrderId == id);
+                if (orderDetail != null)
+                {
+                    _context.OrderDetails.Remove(orderDetail);
+                }
                 _context.Orders.Remove(order);
             }
-
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
+        // GET: Admin/OrderManager/Delete/5
+        public async Task<IActionResult> DeleteorderDetail(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var orderDetail = await _context.OrderDetails.Include(o => o.Order)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (orderDetail == null)
+            {
+                return NotFound();
+            }
+
+            return View(orderDetail);
+        }
+
+        // POST: Admin/OrderManager/Delete/5
+        [HttpPost, ActionName("DeleteorderDetail")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmedorderDetail(int id)
+        {
+            var orderDetail = await _context.OrderDetails.FirstOrDefaultAsync(od => od.Id == id);
+            if (orderDetail == null)
+            {
+                return NotFound();
+            }
+
+            var order = await _context.Orders.FirstOrDefaultAsync(o => o.Id == orderDetail.OrderId);
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            order.Total -= orderDetail.Price;
+            _context.Orders.Update(order);
+            _context.OrderDetails.Remove(orderDetail);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+    
         private bool OrderExists(int id)
         {
             return _context.Orders.Any(e => e.Id == id);

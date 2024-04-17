@@ -22,14 +22,17 @@
                     <td>@orderDetail.Product.Name</td>
                     <td><img src="@orderDetail.Product.ImageUrl" width="100px" /></td>
                     <td>@String.Format("{0:N0}", orderDetail.Quantity)</td>
-                    <td>@String.Format("{0:C}", orderDetail.Price)</td>
-                    <td>@String.Format("{0:C}", orderDetail.Price * orderDetail.Quantity)</td>
+                    <td>@String.Format("{0:N0}", orderDetail.Price)đ</td>
+                    <td>@String.Format("{0:N0}", orderDetail.Price * orderDetail.Quantity)đ</td>
+@*                     <td>
+                        <a class="btn btn-danger" asp-controller="OrderManager" asp-area="Admin" asp-action="DeleteorderDetail" asp-route-id="@orderDetail.Id">Xóa</a>
+                    </td> *@
                     <!-- Thêm các cột khác nếu cần -->
                 </tr>
             }
             <tr>
                 <td colspan="4" style="text-align:right;"><strong>Tổng cộng:</strong></td>
-                <td>@String.Format("{0:C}", Model.Sum(od => od.Price * od.Quantity))</td>
+                <td>@String.Format("{0:N0}", Model.Sum(od => od.Price * od.Quantity))đ</td>
             </tr>
         </tbody>
     </table>
