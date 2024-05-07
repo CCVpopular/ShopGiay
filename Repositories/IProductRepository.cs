@@ -11,5 +11,7 @@ namespace ShopGiay.Repositories
         Task DeleteAsync(int id);
         Task<IEnumerable<Product>> GetByNameAsync(string SearchString);
         Task<IEnumerable<Product>> GetByNameCategoryAsync(string SearchString);
+        Task DeleteImageAsync(int imageId);
+        Task AddImageAsync(ProductImage ProductImage);
     }
 }

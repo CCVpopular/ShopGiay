@@ -17,7 +17,7 @@ namespace ShopGiay.Repositories
         }
         public async Task<Product> GetByIdAsync(int id)
         {
-            return await _context.Products.AsNoTracking().Include(x=>x.Category).SingleOrDefaultAsync(x => x.Id == id);
+            return await _context.Products.AsNoTracking().Include(x => x.Category).Include(y => y.Images).SingleOrDefaultAsync(x => x.Id == id);
         }
         public async Task AddAsync(Product product)
         {
@@ -42,6 +42,20 @@ namespace ShopGiay.Repositories
         public async Task<IEnumerable<Product>> GetByNameCategoryAsync(string SearchString)
         {
             return await _context.Products.Include(x => x.Category).Where(n => n.Category.Name.Contains(SearchString)).ToListAsync();
+        }
+        public async Task DeleteImageAsync(int imageId)
+        {
+            var image = await _context.ProductImages.FindAsync(imageId);
+            if (image != null)
+            {
+                _context.ProductImages.Remove(image);
+                await _context.SaveChangesAsync();
+            }
+        }
+        public async Task AddImageAsync(ProductImage ProductImage)
+        {
+            _context.ProductImages.Add(ProductImage);
+            await _context.SaveChangesAsync();
         }
     }
 }
