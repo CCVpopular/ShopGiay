@@ -31,9 +31,80 @@
             </div>
 
             <div class="form-group">
-                <label asp-for="ImageUrl" class="control-label">Ảnh Sản phẩm</label>
-                <input type="file" asp-for="ImageUrl" class="form-control-file" />
-                <span asp-validation-for="ImageUrl" class="text-danger"></span>
+                <label asp-for="ImageUrl" class="control-label">Ảnh sản phẩm:</label>
+                <input type="file" id="imageInput" asp-for="ImageUrl" class="form-control-file" />
+@*                 <span asp-validation-for="ImageUrl" class="text-danger"></span> *@
+                <br />
+                <img id="previewImage" src="@Model.ImageUrl" alt="Preview" style="max-width: 200px; max-height: 200px; @(Model.ImageUrl == null ? "display: none;" : "")" />
+            </div>
+            <script>
+                document.getElementById('imageInput').onchange = function (evt) {
+                    var preview = document.getElementById('previewImage');
+                    var file = evt.target.files[0];
+                    var reader = new FileReader();
+
+                    reader.onload = function (event) {
+                        preview.src = event.target.result;
+                        preview.style.display = 'block';
+                    };
+
+                    reader.readAsDataURL(file);
+                };
+            </script>
+
+            <div class="form-group">
+                <label asp-for="Images" class="control-label">Ảnh mô tả sản phẩm:</label>
+                <input type="file" id="imageInputPD" name="imageUrls" multiple class="form-control-file" />
+                <laber></laber>
+                <div id="imagePreviewPD" class="mt-2 image-container"></div>
+            </div>
+
+            <script>
+                document.getElementById('imageInputPD').onchange = function (evt) {
+                    var previewContainer = document.getElementById('imagePreviewPD');
+                    previewContainer.innerHTML = '';
+
+                    var files = evt.target.files;
+                    for (var i = 0; i < files.length; i++) {
+                        var file = files[i];
+                        var reader = new FileReader();
+
+                        reader.onload = function (event) {
+                            var img = document.createElement('img');
+                            img.src = event.target.result;
+                            img.style.maxWidth = '200px';
+                            img.style.maxHeight = '200px';
+                            img.style.marginRight = '10px';
+                            previewContainer.appendChild(img);
+                        };
+
+                        reader.readAsDataURL(file);
+                    }
+                };
+                function toggleCheckbox(imageId) {
+                    var checkbox = document.querySelector('input[value="' + imageId + '"]');
+                    checkbox.checked = !checkbox.checked;
+                }
+            </script>
+            <label class="control-label">Hình ảnh mô tả sản phẩm đã có:</label>
+            <div class="form-group image-container">
+
+                @if (Model.Images != null && Model.Images.Any())
+                {
+                    <div class="row">
+                        @foreach (var image in Model.Images)
+                        {
+                            <div class="col-md-3">
+                                <img src="@image.Url" class="img-thumbnail" alt="Product Image" style="max-width: 100%; height: auto;" onclick="toggleCheckbox('@image.Id')" />
+                                <input type="checkbox" name="deletedImageIds" value="@image.Id" /> Xóa
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p>Không có hình ảnh mô tả nào nào cho sản phẩm này.</p>
+                }
             </div>
 
             <div class="form-group">
@@ -43,9 +114,19 @@
             </div>
 
             <div class="form-group">
-                <button type="submit" class="btn btn-primary">Thêm Sản Phẩm</button>
+                <button type="submit" class="btn btn-primary">Lưu</button>
                 <a asp-action="Index" class="btn btn-secondary">Trở về danh sách sản phẩm</a>
             </div>
         </form>
     </div>
 </div>
+
+
+
+<style>
+    .image-container {
+        max-height: 300px; /* Giới hạn chiều cao của khung bảng */
+        overflow: auto; /* Tạo thanh cuộn khi nội dung vượt quá khung */
+        overflow-x:hidden;
+    }
+</style>
