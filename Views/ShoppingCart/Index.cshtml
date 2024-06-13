@@ -1,11 +1,16 @@
 ﻿@model ShoppingCart
-
+@using ShopGiay.Models
 @{
     // Khởi tạo biến để lưu tổng giá và kiểm tra giỏ hàng có trống không
     decimal totalPrice = 0;
     bool cartIsEmpty = Model.Items.Count == 0;
 }
-
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @TempData["ErrorMessage"]
+    </div>
+}
 <br />
 <br />
 <br />
@@ -37,18 +42,44 @@
                                             <span class="text-muted mr-2">Quantity:</span>
                                             <!-- Form để cập nhật số lượng sản phẩm -->
                                             <form asp-controller="ShoppingCart" asp-action="UpdateQuantity" method="post">
-                                                <input type="hidden" name="productId" value="@item.ProductId" /> 
+                                                <input type="hidden" name="productId" value="@item.ProductId" />
+                                                <input type="hidden" name="cartId" value="@item.Id" />
                                                 <input type="number" name="Quantity" value="@item.Quantity" min="1" class="form-control form-control-sm quantity-input-sm border-secondary" onchange="this.form.submit()" />
                                             </form>
                                         </div>
-                                    </td>
+                                        <div class="form-group">
+                                            <label for="Size">Kích cỡ và Số lượng giày theo size:</label>
+                                            <div id="size-quantity-container" class="d-flex flex-wrap">
+                                                @foreach (var size in ViewBag.Size){
+                                                    if(size.ProductId == item.ProductId)
+                                                    {
+                                                        <div class="form-group mr-2 mb-2">
+                                                            <form asp-controller="ShoppingCart" asp-action="UpdateSize" method="post">
+                                                                <input type="hidden" name="cartId" value="@item.Id" />
+                                                                <input type="hidden" name="productId" value="@item.ProductId" />
+                                                                <input type="radio" class="btn-check" name="sizeId" id="@($"size-{item.SizeId}-{size.ProductSizeId}")" value="@size.ProductSizeId" autocomplete="off" @(size.ProductSizeId == item.SizeId ? "checked" : "") onchange="this.form.submit()" />
+                                                                @foreach (var sizename in ViewBag.Sizename)
+                                                                {
+                                                                    if (sizename.Id == size.ProductSizeId)
+                                                                    {
+                                                                        <label class="btn btn-outline-secondary" for="@($"size-{item.SizeId}-{size.ProductSizeId}")">Size: @sizename.Size</label>
+                                                                    }
+                                                                }
+                                                            </form>
+                                                        </div>                                                                                                                                                                                                      
+                                                    }                                                      
+                                                }
+                                            </div>
+                                        </div>
+                                        
+                                    </td>                      
                                     <!-- Giá của mỗi sản phẩm -->
                                     <td>@string.Format("{0:N0}", item.Price)đ</td>
                                     <!-- Tổng giá của mỗi sản phẩm (Giá x Số lượng) -->
                                     <td>@string.Format("{0:N0}", (item.Price * item.Quantity))đ</td>
                                     <!-- Nút để xóa sản phẩm khỏi giỏ hàng -->
                                     <td>
-                                        <a asp-action="RemoveFromCart" asp-route-productId="@item.ProductId" class="btn btn-outline-danger btn-sm">Xóa</a>
+                                        <a asp-action="RemoveFromCart" asp-route-productId="@item.Id" class="btn btn-outline-danger btn-sm">Xóa</a>
                                     </td>
                                 </tr>
                                 <!-- Cập nhật tổng giá của giỏ hàng -->

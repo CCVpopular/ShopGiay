@@ -24,7 +24,7 @@ namespace ShopGiay.Areas.Admin.Controllers
             //await _context.ApplicationUsers.ToListAsync()
             return View(usersWithoutAnyRole);
         }
-        public async Task<IActionResult> Delete(string? id)
+        public async Task<IActionResult> Ban(string? id)
         {
             if (id == null)
             {
@@ -37,22 +37,51 @@ namespace ShopGiay.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-
             return View(user);
         }
 
         // POST: Admin/ContactsManager/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost, ActionName("Ban")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
+        public async Task<IActionResult> Ban(string id, DateTime selectedDate)
         {
             var user = await _context.ApplicationUsers.FindAsync(id);
             if (user != null)
             {
-                _context.ApplicationUsers.Remove(user);
+                user.LockoutEnd = selectedDate;
+                _context.Update(user);
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction(nameof(Index));
+        }
+        public async Task<IActionResult> UnBan(string? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
             }
 
-            await _context.SaveChangesAsync();
+            var user = await _userManager.Users
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return View(user);
+        }
+
+        // POST: Admin/ContactsManager/Delete/5
+        [HttpPost, ActionName("UnBan")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UnBan(string id, DateTime selectedDate)
+        {
+            var user = await _context.ApplicationUsers.FindAsync(id);
+            if (user != null)
+            {
+                user.LockoutEnd = null;
+                _context.Update(user);
+                await _context.SaveChangesAsync();
+            }
             return RedirectToAction(nameof(Index));
         }
     }

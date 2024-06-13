@@ -4,12 +4,31 @@
 
 @{
     ViewData["Title"] = "Search";
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br /> 
 }
+<div id="searchWithManyValueContainer">
+    <!-- The partial view content will be loaded here -->
+</div>
 <br />
-<br />
-<br />
-<br />
-<br />
+<script type="text/javascript">
+    $(document).ready(function () {
+        $.ajax({
+            url: '@Url.Action("SearchWithManyVaule", "Product")',
+            type: 'GET',
+            success: function (data) {
+                $('#searchWithManyValueContainer').html(data);
+            },
+            error: function (xhr, status, error) {
+                console.error('AJAX call failed:', status, error);
+            }
+        });
+    });
+</script>
 <div class="container">
         <table class="table table-striped">
             <tbody>
@@ -25,20 +44,31 @@
                                 <form asp-controller="ShoppingCart" asp-action="AddToCart" method="post">
                                     <input type="hidden" name="productId" value="@item.Id" />
                                     <input type="hidden" id="quantity" name="quantity" value="1" min="1" />
-                                    <button class="btn btn-info btn-sm add-to-cart-button" type="submit">Add to Cart</button>
+                                    <input type="hidden" name="action" value="Search"/>
+                                    <input type="hidden" name="Size" value="37" />
+                                    <button class="btn btn-info btn-sm add-to-cart-button" type="submit">Thêm vào giỏ hàng</button>
                                 </form>
                                 <h4 class="card-title">
                                     <a asp-action="Details" asp-route-id="@item.Id" class="product-title">@item.Name</a>
                                 </h4>
-                                <h5>@item.Price</h5>
-                            </div>
-                            <div class="card-footer">
-                                <!-- Move the form inside the card-footer -->
-                                <form asp-controller="ShoppingCart" asp-action="AddToCart" method="post">
-                                    <input type="hidden" name="productId" value="@item.Id" />
-                                    <input type="hidden" id="quantity" name="quantity" value="1" min="1" />
-                                    <button class="btn btn-info btn-sm add-to-cart-button" type="submit">Add to Cart</button>
-                                </form>
+                                <h5>
+                                    @if (item.PromotionId != null)
+                                    {
+                                        <span>
+                                            @string.Format("{0:N0}", item.DiscountedPrice)đ
+                                        </span>
+                                        <span style="text-decoration: line-through; color: dimgray;">
+                                            @string.Format("{0:N0}", item.Price)đ
+                                        </span>
+                                        <span style="color: red;">
+                                            @item.Promotions.DiscountPercent%
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span>@string.Format("{0:N0}", item.Price)đ</span>
+                                    }
+                                </h5>
                             </div>
                         </div>
                     </div>

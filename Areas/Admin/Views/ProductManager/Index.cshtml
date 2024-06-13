@@ -31,7 +31,24 @@
         {
             <tr>
                 <td>@Html.DisplayFor(modelItem => item.Name)</td>
-                <td>@String.Format("{0:N0}", item.Price)đ</td>
+                <td>
+                @if (item.PromotionId != null)
+                {
+                    <span>
+                        @string.Format("{0:N0}", item.DiscountedPrice)đ
+                    </span>
+                    <span style="text-decoration: line-through; color: dimgray;">
+                        @string.Format("{0:N0}", item.Price)đ
+                    </span>
+                    <span style="color: red;">
+                        @item.Promotions.DiscountPercent%
+                    </span>
+                }
+                else
+                {
+                    <span>@string.Format("{0:N0}", item.Price)đ</span>
+                }
+                </td>
                 <td>@Html.DisplayFor(modelItem => item.Description)</td>
                 <td><img src="@Html.DisplayFor(modelItem => item.ImageUrl)" width="150px" class="img-fluid rounded" alt="Ảnh sản phẩm" /></td>
                 <td>@Html.DisplayFor(modelItem => item.Category.Name)</td>
@@ -56,6 +73,3 @@
         PageClasses = new[] { "page-link" }
     })
 </div>
-<style>
-
-</style>

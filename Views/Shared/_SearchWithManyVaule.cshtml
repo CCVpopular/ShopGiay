@@ -1,0 +1,119 @@
+﻿@model ShopGiay.Models.ProductandSizeVM
+
+
+<form asp-action="SearchWithManyVaulePost" method="post">
+    <div class="searchmany">
+        <div class="row">
+            <div class="col">
+                <div class="form-group row">
+                    <label asp-for="CategoryId" class="col-sm-2 col-form-label">Loại:</label>
+                    <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.Categories">
+                        <option value="">Chọn Thể Loại</option>
+                    </select>
+                </div>
+
+                <div class="form-group row">
+                    <label asp-for="ProductColorId" class="col-sm-2 col-form-label">Màu:</label>
+                    <select asp-for="ProductColorId" class="form-control" asp-items="ViewBag.Color">
+                        <option value="">Chọn Màu</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group row">
+                    <label asp-for="BrandId" class="col-sm-2 col-form-label">Hãng:</label>
+                    <select asp-for="BrandId" class="form-control" asp-items="ViewBag.Brand">
+                        <option value="">Chọn Hãng</option>
+                    </select>
+                </div>
+                <div class="form-group row">
+                    <label asp-for="SizeId" class="col-sm-2 col-form-label">Size:</label>
+                    <select asp-for="SizeId" class="form-control" asp-items="ViewBag.Size">
+                        <option value="">Chọn Size</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-check">
+                    <input asp-for="IsDiscount" class="form-check-input" type="checkbox" id="flexCheckDefault">
+                    <label class="form-check-label" for="flexCheckDefault" asp-for="IsDiscount">
+                        Khuyến mãi
+                    </label>
+                </div>
+                <div class="form-group row gia">
+                    <label class="col-sm-2 col-form-label">Giá tiền</label>
+                    <div class="slider_range">
+                        <div id="kt_slider_basic"></div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <input type="hidden" asp-for="MinPrice" id="minPriceInput" />
+                <input type="hidden" asp-for="MaxPrice" id="maxPriceInput" />
+                <button type="submit" class="btn btn-info">Lọc</button>
+            </div>
+        </div>
+
+    </div>
+   
+</form>
+
+<style>
+    .searchmany{
+        margin-left: 10%;
+        margin-right: 1%;
+    }
+    /* Đặt chiều rộng tối đa cho các khung chọn */
+    select.form-control {
+        max-width: 150px; /* Điều chỉnh giá trị tối đa cho chiều rộng */
+    }
+
+    .slider_range{
+        width: 30%;
+        padding-top:2%;
+    }
+
+    .gia{
+        padding-left:5%;
+    }
+</style>
+
+<script>
+    var slider = document.querySelector("#kt_slider_basic");
+
+
+    var minPriceInput = document.querySelector("#minPriceInput");
+    var maxPriceInput = document.querySelector("#maxPriceInput");
+
+    function formatNumber(number) {
+        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    noUiSlider.create(slider, {
+        start: [0, 10000000],
+        connect: true,
+        range: {
+            "min": 0,
+            "max": 10000000
+        },
+        tooltips: [true, true],
+        format: {
+            to: function (value) {
+                return formatNumber(Math.round(value));
+            },
+            from: function (value) {
+                return Number(value.replace(/\./g, ''));
+            }
+        }
+    });
+
+    slider.noUiSlider.on("update", function (values, handle) {
+        var formattedValue = formatNumber(Math.round(values[handle]));
+        if (handle) {
+            maxPriceInput.value = formattedValue;
+        } else {
+
+            minPriceInput.value = formattedValue;
+        }
+    });
+</script>

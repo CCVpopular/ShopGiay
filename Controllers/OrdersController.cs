@@ -29,7 +29,7 @@ namespace ShopGiay.Controllers
         // GET: Orders/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            var orderDetails = await _context.OrderDetails.Include(od => od.Order).Include(od => od.Product).Where(od => od.OrderId == id).ToListAsync();
+            var orderDetails = await _context.OrderDetails.Include(od => od.Order).Include(od => od.Product).Include(s => s.ProductSize).Where(od => od.OrderId == id).ToListAsync();
             if (orderDetails == null)
             {
                 NotFound();

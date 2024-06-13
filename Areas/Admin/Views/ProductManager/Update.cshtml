@@ -25,6 +25,13 @@
             </div>
 
             <div class="form-group">
+                <label asp-for="PromotionId" class="control-label">khuyen mai:</label>
+                <select asp-for="PromotionId" class="form-control" asp-items="ViewBag.Promotion">
+                    <option value="">-- Chọn mức giảm giá  --</option>
+                </select>
+            </div>
+
+            <div class="form-group">
                 <label asp-for="Description" class="control-label">Mô tả</label>
                 <textarea asp-for="Description" class="form-control" rows="4"></textarea>
                 <span asp-validation-for="Description" class="text-danger"></span>
@@ -112,7 +119,40 @@
                 <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.Categories"></select>
                 <span asp-validation-for="CategoryId" class="text-danger"></span>
             </div>
-
+            <div class="form-group">
+                <label asp-for="ProductColorId" class="control-label">Màu Giày:</label>
+                <select asp-for="ProductColorId" class="form-control" asp-items="ViewBag.Color">
+                    <option value="">-- Chọn Màu Giày --</option>
+                </select>
+                <span asp-validation-for="BrandId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="BrandId" class="control-label">Hãng:</label>
+                <select asp-for="BrandId" class="form-control" asp-items="ViewBag.Brand">
+                    <option value="">-- Chọn Hãng --</option>
+                </select>
+                <span asp-validation-for="BrandId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SupplierId" class="control-label">Nhà Cung Cấp:</label>
+                <select asp-for="SupplierId" class="form-control" asp-items="ViewBag.Supplier">
+                    <option value="">-- Chọn Nhà Cung Cấp --</option>
+                </select>
+                <span asp-validation-for="BrandId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label for="Size">Kích cỡ và Số lượng giày theo size:</label>
+                <div id="size-quantity-container" class="d-flex flex-wrap">
+                    @foreach (var size in ViewBag.Sizeu)
+                    {
+                        <div class="form-group mr-2 mb-2">
+                            <label>Size: @size.Size</label>
+                            <input type="hidden" name="sizeIds" value="@size.Id" />
+                            <input type="number" name="quantities" class="form-control quantity-input" placeholder="Nhập số lượng" value="@size.Quantity" required min="0" />
+                        </div>
+                    }
+                </div>
+            </div>
             <div class="form-group">
                 <button type="submit" class="btn btn-primary">Lưu</button>
                 <a asp-action="Index" class="btn btn-secondary">Trở về danh sách sản phẩm</a>

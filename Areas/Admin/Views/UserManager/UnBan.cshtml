@@ -1,0 +1,26 @@
+﻿@model ShopGiay.Models.ApplicationUser
+
+@{
+    ViewData["Title"] = "UnBan";
+}
+
+<h3>Bạn có chắc là muốn gỡ chặn người dùng này</h3>
+<div>
+    <form asp-action="UnBan">
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.FullName)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+            <dd class="col-sm-2">
+                @Html.DisplayFor(model => model.LockoutEnd)
+            </dd>
+    </dl>
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="UnBan" class="btn btn-danger" /> |
+        <a asp-action="Index">Back to List</a>
+    </form>
+</div>

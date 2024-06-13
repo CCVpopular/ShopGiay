@@ -1,0 +1,50 @@
+﻿<!-- _SearchSuggestions.cshtml -->
+@model IEnumerable<string>
+
+@if (Model != null && Model.Any())
+{
+    <div id="suggestions-popup" class="popup">
+        <ul>
+            @foreach (var suggestion in Model)
+            {
+                <li class="suggestion-item">@suggestion</li>
+            }
+        </ul>
+    </div>
+}
+else
+{
+    <div id="suggestions-popup" class="popup">
+        <p>Không tìm thấy sản phẩm nào.</p>
+    </div>
+}
+
+
+<!-- CSS -->
+<style>
+    .popup {
+        position: absolute;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        padding: 10px;
+        z-index: 300;
+    }
+
+    .suggestion-item:hover {
+        background-color: #f0f0f0; /* Màu nền khi hover */
+        cursor: pointer; /* Thay đổi con trỏ thành dấu chấm khi hover */
+        border: 1px solid #ccc; /* Đường viền khi hover */
+    }
+
+    #suggestions-popup {
+        max-height: 200px; /* Đặt chiều cao tối đa của danh sách */
+        overflow-y: auto; /* Hiển thị thanh cuộn khi danh sách vượt quá chiều cao */
+    }
+
+    .popup ul {
+        margin-top: 0; /* Xóa margin từ đầu danh sách */
+        padding-left: 0; /* Xóa padding mặc định */
+        list-style-type: none; /* Xóa dấu chấm đầu danh sách */
+    }
+
+</style>

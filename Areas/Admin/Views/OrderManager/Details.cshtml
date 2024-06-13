@@ -10,6 +10,7 @@
                 <th>Tên Sản Phẩm</th>
                 <th>Hình ảnh</th>
                 <th>Số lượng</th>
+                <th>Size giày</th>
                 <th>Đơn giá</th>
                 <th>Tổng giá</th>
                 <!-- Thêm các cột khác nếu cần -->
@@ -22,6 +23,7 @@
                     <td>@orderDetail.Product.Name</td>
                     <td><img src="@orderDetail.Product.ImageUrl" width="100px" /></td>
                     <td>@String.Format("{0:N0}", orderDetail.Quantity)</td>
+                    <td>@orderDetail.ProductSize.Size</td>
                     <td>@String.Format("{0:N0}", orderDetail.Price)đ</td>
                     <td>@String.Format("{0:N0}", orderDetail.Price * orderDetail.Quantity)đ</td>
 @*                     <td>

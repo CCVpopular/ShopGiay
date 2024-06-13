@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 using ShopGiay.EF;
@@ -25,7 +26,7 @@ namespace ShopGiay.Controllers
             _context = context;
             _vnPayService = vnPay;
         }
-        public async Task<IActionResult> AddToCart(int productId, int quantity, string action)
+        public async Task<IActionResult> AddToCart(int productId, int quantity, string action, int Size)
         {
             // phương thức lấy thông tin sản phẩm từ productId
             Product product = await GetProductFromDatabaseAsync(productId);
@@ -33,22 +34,48 @@ namespace ShopGiay.Controllers
             {
                 return NotFound(); // Trả về 404 Not Found
             }
-            var cartItem = new CartItem
+            var Sizes = await _productRepository.GetProductSizeAsync();
+            ProductSize SizeP;
+            if (action == "Buy-Now" || action == "Details")
             {
+                SizeP = Sizes.SingleOrDefault(s => s.Size == Size);
+            }
+            else
+            {
+                var sizesWithQuantity = Sizes.Where(size => size.ProductQuantities != null && size.ProductQuantities.Any(pq => pq.Quantity > 0 && pq.ProductId == productId)).ToList();
+                Size = sizesWithQuantity.FirstOrDefault()?.Size ?? 0;             
+                SizeP = Sizes.SingleOrDefault(s => s.Size == Size);
+            }
+
+            var cartItem = new CartItem
+            {   
+                Id = productId + "-" + SizeP.Id,
                 ProductId = productId,
                 Name = product.Name,
-                Price = product.Price,
+                Price = product.DiscountedPrice,
                 Quantity = quantity,
                 Image = product.ImageUrl,
+                SizeId = SizeP.Id,
             };
             var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart") ?? new ShoppingCart();
             cart.AddItem(cartItem);
             HttpContext.Session.SetObjectAsJson("Cart", cart);
             // Nếu hành động là "Mua Ngay", chuyển hướng đến trang giỏ hàng
-            return RedirectToAction(nameof(Index));        
+            if (action == "Buy-Now")
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            else if(action == "Details")
+            {
+                return RedirectToAction(nameof(Details),nameof(Product), new { id = productId });
+            }
+            else
+            {
+                return RedirectToAction(action,nameof(Product));
+            }
         }
 
-        public async Task<IActionResult> RemoveFromCart(int productId)
+        public async Task<IActionResult> RemoveFromCart(string productId)
         {
             var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart") ?? new ShoppingCart();
             if (cart == null)
@@ -60,14 +87,40 @@ namespace ShopGiay.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> UpdateQuantity(int productId, int quantity)
+        public async Task<IActionResult> UpdateSize(string cartId,int productId , int sizeId)
         {
             var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart") ?? new ShoppingCart();
             if (cart == null)
             {
                 return NotFound();
             }
-            cart.UpdateQuantity(productId, quantity);
+            var existingItem = cart.Items.FirstOrDefault(ci => ci.SizeId == sizeId && ci.ProductId == productId);
+            if (existingItem != null)
+            {
+                TempData["ErrorMessage"] = "Size này đã được chọn cho sản phẩm này.";
+                return RedirectToAction(nameof(Index));
+            }
+            cart.UpdateSize(cartId, sizeId);
+            HttpContext.Session.SetObjectAsJson("Cart", cart);
+            return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> UpdateQuantity(int productId, int quantity,string cartId)
+        {
+            var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart") ?? new ShoppingCart();
+            if (cart == null)
+            {
+                return NotFound();
+            }
+
+            var Item = cart.Items.FirstOrDefault(ci => ci.Id == cartId);
+            var product = await _context.ProductQuantities.FirstOrDefaultAsync(ci => ci.ProductId == productId && Item.SizeId == ci.ProductSizeId && ci.Quantity >= quantity);
+            if (product == null)
+            {
+                TempData["ErrorMessage"] = "Số lượng giày không vượt quá số lượng trong kho.";
+                return RedirectToAction(nameof(Index));
+            }
+            cart.UpdateQuantity(productId, quantity, cartId);
             HttpContext.Session.SetObjectAsJson("Cart", cart);
             return RedirectToAction(nameof(Index));
         }
@@ -82,9 +135,16 @@ namespace ShopGiay.Controllers
             }
             return View(new Order());
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart") ?? new ShoppingCart();
+            var productIds = cart.Items.Select(item => item.ProductId).ToList();
+            var sizesWithQuantity = await _productRepository.GetQuantitiesForProducts(productIds);
+
+            var sizesWithQuantityablevaule = sizesWithQuantity.Where(item => item.Quantity > 0).ToList();
+            ViewBag.Size = sizesWithQuantityablevaule;
+            var Sizes = await _productRepository.GetProductSizeAsync();
+            ViewBag.Sizename = Sizes;
             return View(cart);
         }
         // Các actions khác...
@@ -99,7 +159,16 @@ namespace ShopGiay.Controllers
         {
             var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart");
 			var user = await _userManager.GetUserAsync(User);
-			if (payment == "Thanh toán VnPay")
+            foreach (var item in cart.Items)
+            {
+                var quantity = await _context.ProductQuantities.FirstOrDefaultAsync(p => p.ProductId == item.ProductId && p.ProductSizeId == item.SizeId);
+                if (quantity != null && quantity.Quantity >= item.Quantity)
+                {
+                    quantity.Quantity -= item.Quantity;
+                    _context.ProductQuantities.Update(quantity);
+                }
+            }
+            if (payment == "Thanh toán VnPay")
             {
                 var vnPayModel = new VnPaymentRequestModel
                 {
@@ -117,15 +186,16 @@ namespace ShopGiay.Controllers
 				{
 					ProductId = i.ProductId,
 					Quantity = i.Quantity,
-					Price = i.Price
-				}).ToList();
+					Price = i.Price,
+                    ProductSizeId = i.SizeId,
+                }).ToList();
+                OrderidVM orderid = new OrderidVM();
+                orderid.ID = order.Id;
 				_context.Orders.Add(order);
-				await _context.SaveChangesAsync();
-				HttpContext.Session.Remove("Cart");
+                await _context.SaveChangesAsync();
+                HttpContext.Session.Remove("Cart");
 				return Redirect(_vnPayService.CreatePaymentUrl(HttpContext, vnPayModel));
             }
-
-
             order.UserId = user.Id;
             order.OrderDate = DateTime.UtcNow;
             order.Total = cart.Items.Sum(i => i.Price * i.Quantity);
@@ -133,9 +203,9 @@ namespace ShopGiay.Controllers
             {
                 ProductId = i.ProductId,
                 Quantity = i.Quantity,
-                Price = i.Price
+                Price = i.Price,
+                ProductSizeId= i.SizeId,
             }).ToList();
-
             _context.Orders.Add(order); 
             await _context.SaveChangesAsync();
             HttpContext.Session.Remove("Cart");
@@ -175,7 +245,6 @@ namespace ShopGiay.Controllers
                 return RedirectToAction("PaymentFail");
             }
             // Lưu đơn hàng vô database
-            
             TempData["Message"] = $"Thanh toán VNPay thành công";
             return View("OrderCompleted");
         }

@@ -72,6 +72,11 @@
                         <h6 class="collapse-header">Thêm tùy chỉnh:</h6>
                         <a asp-area="Admin" asp-controller="ProductManager" asp-action="Add" class="collapse-item">Sản Phẩm</a>
                         <a asp-area="Admin" asp-controller="Categories" asp-action="Create" class="collapse-item">Thể Loại</a>
+                        <a asp-area="Admin" asp-controller="Promotions" asp-action="Create" class="collapse-item">Giảm Giá</a>
+                        <a asp-area="Admin" asp-controller="ProductSizes" asp-action="Create" class="collapse-item">Kích cỡ giày</a>
+                        <a asp-area="Admin" asp-controller="ProductColors" asp-action="Create" class="collapse-item">Màu giày</a>
+                        <a asp-area="Admin" asp-controller="Brands" asp-action="Create" class="collapse-item">Hãng</a>
+                        <a asp-area="Admin" asp-controller="Suppliers" asp-action="Create" class="collapse-item">Nhà Cung Cấp</a>
                     </div>
                 </div>
             </li>
@@ -89,10 +94,26 @@
                         <a asp-area="Admin" asp-controller="ProductManager" asp-action="Index" class="collapse-item" >Sản Phẩm</a>
                         <a asp-area="Admin" asp-controller="Categories" asp-action="Index" class="collapse-item">Thể Loại</a>
                         <a asp-area="Admin" asp-controller="OrderManager" asp-action="Index" class="collapse-item">Đơn Hàng</a>
+                        <a asp-area="Admin" asp-controller="Suppliers" asp-action="Index" class="collapse-item">Nhà Cung Cấp</a>
                     </div>
                 </div>
             </li>
-
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseorder"
+                   aria-expanded="true" aria-controls="collapseorder">
+                    <span>Danh sách thuộc tính</span>
+                </a>
+                <div id="collapseorder" class="collapse" aria-labelledby="headingUtilities"
+                     data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Danh Sách Danh Mục:</h6>
+                        <a asp-area="Admin" asp-controller="Brands" asp-action="Index" class="collapse-item">Hãng</a>
+                        <a asp-area="Admin" asp-controller="ProductColors" asp-action="Index" class="collapse-item">Màu giày</a>
+                        <a asp-area="Admin" asp-controller="ProductSizes" asp-action="Index" class="collapse-item">Kích cỡ giày</a>
+                        <a asp-area="Admin" asp-controller="Promotions" asp-action="Index" class="collapse-item">Giảm giá</a>
+                    </div>
+                </div>
+            </li>
             <!-- Divider -->
             <hr class="sidebar-divider">
 
@@ -127,8 +148,7 @@
                     <i class="fas fa-fw fa-chart-area"></i>
                     <span>Phản Hồi Khách Hàng</span>
                 </a>
-            </li>
-
+            </li> 
             <!-- Nav Item - Tables -->
             <li class="nav-item">
                 <a class="nav-link" asp-area="Admin" asp-controller="UserManager" asp-action="Index">

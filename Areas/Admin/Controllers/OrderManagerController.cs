@@ -32,7 +32,7 @@ namespace ShopGiay.Areas.Admin.Controllers
         // GET: Admin/OrderManager/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            var orderDetails = await _context.OrderDetails.Include(od => od.Order).Include(od => od.Product).Where(od => od.OrderId == id).ToListAsync();
+            var orderDetails = await _context.OrderDetails.Include(od => od.Order).Include(od => od.Product).Include(pz => pz.ProductSize).Where(od => od.OrderId == id).ToListAsync();
             if(orderDetails == null)
             {
                 NotFound();

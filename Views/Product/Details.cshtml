@@ -3,7 +3,9 @@
 @{
     ViewData["Title"] = "Display";
 }
-
+@{
+    var firstAvailableSize = ViewBag.FirstAvailableSize;
+}
 <br />
 <br />
 <br />
@@ -25,7 +27,25 @@
                 </tr>
                 <tr>
                     <th>Đơn Giá:</th>
-                    <td>@string.Format("{0:N0}", Model.Price)đ</td>
+                    <td>
+                        @if (Model.PromotionId != null)
+                    {
+                        <span>
+                            @string.Format("{0:N0}", Model.DiscountedPrice)đ
+                        </span>
+                        <span style="text-decoration: line-through; color: dimgray;">
+                                @string.Format("{0:N0}", Model.Price)đ
+                        </span>
+                        <span style="color: red;">
+                                @Model.Promotions.DiscountPercent%
+                        </span>
+                    }
+                    else
+                    {
+                            <span>@string.Format("{0:N0}", Model.Price)đ</span>
+                    }
+                    
+                    </td>
                 </tr>
                 <tr>
                     <th>Mô Tả:</th>
@@ -35,20 +55,47 @@
                     <th>Loại:</th>
                     <td>@Html.DisplayFor(model => model.Category.Name)</td>
                 </tr>
+                <tr>
+                    <th>Màu:</th>
+                    <td>@Html.DisplayFor(model => model.ProductColor.Color)</td>
+                </tr>
             </table>
+
             <form asp-controller="ShoppingCart" asp-action="AddToCart" method="post">
                 <input type="hidden" name="productId" value="@Model.Id" />
+                <input type="hidden" name="quantity" id="hidden-quantity" value="1" />
                 <div class="form-group">
                     <label for="quantity">Số Lượng:</label>
-                    <p></p>
-                    <input type="number" id="quantity" name="quantity" class="form-control quantity-input-sm" value="1" min="1">
+                    <p id="quantity-message"></p>
+                    <input type="number" id="quantity" class="form-control quantity-input-sm" value="1" min="1" oninput="updateHiddenQuantity(this.value)">
+                </div>
+                <div class="form-group">
+                    <label for="Size">Kích cỡ và Số lượng giày theo size:</label>
+                    <div id="size-quantity-container" class="d-flex flex-wrap">
+                        @foreach (var size in ViewBag.Size)
+                        {
+                            <input type="radio" class="btn-check" name="Size" id="@("size-" + size.Id)" value="@size.Size" autocomplete="off" @(size.Size == firstAvailableSize ? "checked" : "") />
+                            <label class="btn btn-outline-secondary" for="@("size-" + size.Id)">Size: @size.Size</label>
+                        }
+                    </div>
+                    <div id="size-quantity-display" class="mt-3">
+                        <span id="selected-quantity">Số lượng: </span>
+                    </div>
                 </div>
                 <p></p>
-                <button class="btn btn-primary" type="submit" name="action" value="addToCart">Thêm Vào Giỏ Hàng</button>
-                <button class="btn btn-success" type="submit" name="action" value="buyNow">Mua Ngay</button>
+                <button class="btn btn-primary" type="submit" name="action" value="Details">Thêm Vào Giỏ Hàng</button>
+                <button class="btn btn-success" type="submit" name="action" value="Buy-Now">Mua Ngay</button>
             </form>
         </div>
     </div>
+    @if (Model.Images != null)
+    {
+        @foreach (var images in Model.Images)
+        {
+            <img src="@images.Url" width="30%" />
+        }
+       
+    }
     <div class="row mt-3">
         <div class="col-md-12">
             <a asp-action="Index" class="btn btn-secondary">Trở Về</a>
@@ -65,3 +112,73 @@
         width: 30%;
     }
 </style>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var maxAvailableQuantity = 0;          
+            function fetchQuantity(size) {
+                var productId = @Model.Id;
+                $.ajax({
+                    url: '@Url.Action("GetQuantityBySize", "Product")',
+                    type: 'GET',
+                    data: { size: size, id: productId },
+                    success: function (data) {
+                        console.log("Response data:", data);
+                        $('#selected-quantity').text('Số lượng: ' + data.quantity);
+                        maxAvailableQuantity = data.quantity;
+                    },
+                    error: function () {
+                        $('#selected-quantity').text('Lỗi khi lấy số lượng trong kho.');
+                        maxAvailableQuantity = 0;
+                    }
+                });
+            }
+            // Fetch quantity for size on page load
+            var firstAvailableSize = '@firstAvailableSize';
+            if (firstAvailableSize) {
+                fetchQuantity(firstAvailableSize);
+            }
+
+            // Fetch quantity when a size is selected
+            $('input[name="Size"]').change(function () {
+                var selectedSize = $(this).val();
+                fetchQuantity(selectedSize);
+                // Reset quantity input to 1 when size is changed
+                $('#quantity').val(1);
+                $('#hidden-quantity').val(1);
+            });
+            window.updateHiddenQuantity = function (quantity) {
+                $('#hidden-quantity').val(quantity);
+            };
+
+            // Prevent form submission when Enter key is pressed in the quantity input
+            $('#quantity').keydown(function (event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                }
+            });
+            $('#quantity').on('input', function () {
+                var currentValue = parseInt($(this).val());
+                if (currentValue > availableStock) {
+                    $(this).val(availableStock);
+                    $('#hidden-quantity').val(availableStock);
+                } else if (currentValue < 1) {
+                    $(this).val(1);
+                    $('#hidden-quantity').val(1);
+                } else {
+                    $('#hidden-quantity').val(currentValue);
+                }
+            });
+            window.updateHiddenQuantity = function (quantity) {
+                if (quantity > maxAvailableQuantity) {
+                    alert('Số lượng không thể vượt quá ' + maxAvailableQuantity);
+                    $('#quantity').val(maxAvailableQuantity);
+                    $('#hidden-quantity').val(maxAvailableQuantity);
+                } else {
+                    $('#hidden-quantity').val(quantity);
+                }
+            };
+        });
+    </script>
+}

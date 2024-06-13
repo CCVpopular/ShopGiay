@@ -20,7 +20,29 @@
             @Html.DisplayNameFor(model => model.Price)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Price)
+            @if (Model.PromotionId != null)
+            {
+                <span>
+                    @string.Format("{0:N0}", Model.DiscountedPrice)đ
+                </span>
+                <span style="text-decoration: line-through; color: dimgray;">
+                    @string.Format("{0:N0}", Model.Price)đ
+                </span>
+                <span style="color: red;">
+                    @Model.Promotions.DiscountPercent%
+                </span>
+            }
+            else
+            {
+                <span>@string.Format("{0:N0}", Model.Price)đ</span>
+            }
+            
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ProductColor.Color)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ProductColor.Color)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Description)

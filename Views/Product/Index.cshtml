@@ -3,11 +3,39 @@
 @{
     ViewData["Title"] = "Index";
 }
+@{
+    var firstAvailableSize = ViewBag.FirstAvailableSize;
+}
+
 <br />
 <br />
+<br />
+<br />
+<br />
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $.ajax({
+            url: '@Url.Action("SearchWithManyVaule", "Product")',
+            type: 'GET',
+            success: function (data) {
+                $('#searchWithManyValueContainer').html(data);
+            },
+            error: function (xhr, status, error) {
+                console.error('AJAX call failed:', status, error);
+            }
+        });
+    });
+</script>
 <video loop="" muted="" playsinline="" autoplay="" fetchpriority="high" width="100%" height="auto">
     <source src="https://brand.assets.adidas.com/video/upload/f_auto:video,q_auto/if_w_gt_1920,w_1920/originals_ss24_sl72_mh_2_d_26f1c3929a.mp4" media="(min-width: 600px)" type="video/mp4">
 </video>
+
+<div id="searchWithManyValueContainer">
+    <!-- The partial view content will be loaded here -->
+</div>
+
 <h1 class="text-center">Bán Chạy</h1>
 <div class="horizontal-line"></div>
 <br />
@@ -24,7 +52,24 @@
                             <h4 class="card-title">
                                 <a asp-action="Details" asp-route-id="@item.Id" class="product-title">@item.Name</a>
                             </h4>
-                        <h5>@string.Format("{0:N0}", @item.Price)đ</h5>
+                        <h5>
+                            @if (item.PromotionId != null)
+                            {
+                                <span>
+                                    @string.Format("{0:N0}", item.DiscountedPrice)đ
+                                </span>
+                                <span style="text-decoration: line-through; color: dimgray;">
+                                    @string.Format("{0:N0}", item.Price)đ
+                                </span>
+                                <span style="color: red;">
+                                    @item.Promotions.DiscountPercent%
+                                </span>
+                            }
+                            else
+                            {
+                                <span>@string.Format("{0:N0}", item.Price)đ</span>
+                            }
+                        </h5>
                         </div>
                     </div>
                 </div>
@@ -49,12 +94,31 @@
                                 <form asp-controller="ShoppingCart" asp-action="AddToCart" method="post">
                                     <input type="hidden" name="productId" value="@item.Id" />
                                     <input type="hidden" id="quantity" name="quantity" value="1" min="1" />
+                                    <input type="hidden" name="Size" value="37" />
+                                    <input type="hidden" name="action" value="Index"/>
                                     <button class="btn btn-info btn-sm add-to-cart-button" type="submit">Thêm Vào Giỏ Hàng</button>
                                 </form>
                                 <h4 class="card-title">
                                     <a asp-action="Details" asp-route-id="@item.Id" class="product-title">@item.Name</a>
                                 </h4>
-                                <h5>@string.Format("{0:N0}", @item.Price)đ</h5>
+                                <h5>
+                                    @if (item.PromotionId != null)
+                                    {                                       
+                                        <span>
+                                            @string.Format("{0:N0}", item.DiscountedPrice)đ
+                                        </span>
+                                        <span style="text-decoration: line-through; color: dimgray;">
+                                            @string.Format("{0:N0}", item.Price)đ
+                                        </span>
+                                        <span style="color: red;">
+                                            @item.Promotions.DiscountPercent%
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span>@string.Format("{0:N0}", item.Price)đ</span>
+                                    }
+                                </h5>
                             </div>
                         </div>
                     </div>

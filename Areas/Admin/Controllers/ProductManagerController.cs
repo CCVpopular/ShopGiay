@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ShopGiay.Models;
 using ShopGiay.Repositories;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using X.PagedList;
@@ -43,11 +44,21 @@ namespace ShopGiay.Areas.Admin.Controllers
         {
             var categories = await _categoryRepository.GetAllAsync();
             ViewBag.Categories = new SelectList(categories, "Id", "Name");
+            var Brand = await _productRepository.GetBrandsAsync();
+            ViewBag.Brand = new SelectList(Brand, "Id", "BrandName");
+            var Supplier = await _productRepository.GetSuppliersAsync();
+            ViewBag.Supplier = new SelectList(Supplier, "Id", "Name");
+            var Color = await _productRepository.GetProductColorAsync();
+            ViewBag.Color = new SelectList(Color, "Id", "Color");
+            var Promotion = await _productRepository.GetPromotionAsync();
+            ViewBag.Promotion = new SelectList(Promotion, "Id", "DiscountPercent");
+            var Sizes = await _productRepository.GetProductSizeAsync();
+            ViewBag.Size = Sizes;
             return View();
         }
         // Xử lý thêm sản phẩm mới
         [HttpPost]
-        public async Task<IActionResult> Add(Product product, IFormFile imageUrl, List<IFormFile> imageUrls)
+        public async Task<IActionResult> Add(Product product, IFormFile imageUrl, List<IFormFile> imageUrls, List<int> sizeIds, List<int> quantities)
         {
             if (ModelState.IsValid)
             {
@@ -66,12 +77,36 @@ namespace ShopGiay.Areas.Admin.Controllers
                         product.Images.Add(new ProductImage { Url = imageUrlPD });
                     }
                 }
+
+                if(sizeIds != null)
+                {
+                    product.ProductQuantities = new List<ProductQuantity>();
+
+                    for (int i = 0; i < sizeIds.Count; i++)
+                    {
+                        product.ProductQuantities.Add(new ProductQuantity
+                        {
+                            ProductSizeId = sizeIds[i],
+                            Quantity = quantities[i]
+                        });
+                    }
+                }
+                product.CreatedDate = DateTime.Now;
                 await _productRepository.AddAsync(product);
                 return RedirectToAction(nameof(Add));
             }
-            // Nếu ModelState không hợp lệ, hiển thị form với dữ liệu đã nhập
             var categories = await _categoryRepository.GetAllAsync();
             ViewBag.Categories = new SelectList(categories, "Id", "Name");
+            var Brand = await _productRepository.GetBrandsAsync();
+            ViewBag.Brand = new SelectList(Brand, "Id", "BrandName");
+            var Supplier = await _productRepository.GetSuppliersAsync();
+            ViewBag.Supplier = new SelectList(Supplier, "Id", "Name");
+            var Color = await _productRepository.GetProductColorAsync();
+            ViewBag.Color = new SelectList(Color, "Id", "Color");
+            var Promotion = await _productRepository.GetPromotionAsync();
+            ViewBag.Promotion = new SelectList(Promotion, "Id", "DiscountPercent");
+            var Sizes = await _productRepository.GetProductSizeAsync();
+            ViewBag.Size = Sizes;
             return View(product);
         }
         private async Task<string> SaveImage(IFormFile image)
@@ -105,10 +140,13 @@ namespace ShopGiay.Areas.Admin.Controllers
         {
             var productImagePath = Path.Combine("wwwroot/images/DescriptionProduct", productName);
 
+
+
+
             // Tạo thư mục nếu nó không tồn tại
-            if (!Directory.Exists(productImagePath))
+            if (!System.IO.Directory.Exists(productImagePath))
             {
-                Directory.CreateDirectory(productImagePath);
+                System.IO.Directory.CreateDirectory(productImagePath);
             }
 
             var savePath = Path.Combine(productImagePath, image.FileName);
@@ -147,11 +185,28 @@ namespace ShopGiay.Areas.Admin.Controllers
             }
             var categories = await _categoryRepository.GetAllAsync();
             ViewBag.Categories = new SelectList(categories, "Id", "Name", product.CategoryId);
+            var Brand = await _productRepository.GetBrandsAsync();
+            ViewBag.Brand = new SelectList(Brand, "Id", "BrandName", product.BrandId);
+            var Supplier = await _productRepository.GetSuppliersAsync();
+            ViewBag.Supplier = new SelectList(Supplier, "Id", "Name", product.SupplierId);
+            var Color = await _productRepository.GetProductColorAsync();
+            ViewBag.Color = new SelectList(Color, "Id", "Color", product.ProductColorId);
+            var Promotion = await _productRepository.GetPromotionAsync();
+            ViewBag.Promotion = new SelectList(Promotion, "Id", "DiscountPercent", product.PromotionId);
+            var sizes = await _productRepository.GetProductSizeAsync();
+            var productQuantities = await _productRepository.GetProductQuantityAsync(id);
+            var sizesWithQuantities = sizes.Select(size => new
+            {
+                size.Id,
+                size.Size,
+                Quantity = productQuantities.FirstOrDefault(pq => pq.ProductSizeId == size.Id)?.Quantity ?? 0
+            }).ToList();
+            ViewBag.Sizeu = sizesWithQuantities;
             return View(product);
         }
         // Xử lý cập nhật sản phẩm
         [HttpPost]
-        public async Task<IActionResult> Update(int id, Product product, IFormFile imageUrl, List<IFormFile> imageUrls, List<int> deletedImageIds)
+        public async Task<IActionResult> Update(int id, Product product, IFormFile imageUrl, List<IFormFile> imageUrls, List<int> deletedImageIds, List<int> sizeIds, List<int> quantities)
         {
             if (id != product.Id)
             {
@@ -197,7 +252,16 @@ namespace ShopGiay.Areas.Admin.Controllers
                     await _productRepository.AddImageAsync(new ProductImage { Url = imageUrlAdd ,ProductId = id });
                 }
             }
+            if (sizeIds != null)
+            {
 
+                for (int i = 0; i < sizeIds.Count; i++)
+                {
+                    var ProductQuantities = await _productRepository.GetProductQuantityByProductIdAndBySizeIdAsync(id, sizeIds[i]);
+                    ProductQuantities.Quantity = quantities[i];
+                    await _productRepository.UpdateQuantiesAsync(ProductQuantities);
+                }
+            }
             await _productRepository.UpdateAsync(product);
             return RedirectToAction(nameof(Index));
         }
